@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ancient Civilizations</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --gold-dim: #7a6030;
+    --gold-faint: rgba(201,168,76,0.12);
+    --sand: #f0e4c2;
+    --dark: #0d0b07;
+    --meso-color: #8b3a1a;
+    --meso-light: #d4622a;
+    --meso-glow: rgba(212,98,42,0.2);
+    --china-color: #8b1a1a;
+    --china-light: #d42a2a;
+    --china-glow: rgba(212,42,42,0.2);
+    --egypt-color: #1a5c8b;
+    --egypt-light: #2a8bd4;
+    --egypt-glow: rgba(42,139,212,0.2);
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: var(--dark);
+    color: var(--sand);
+    font-family: 'EB Garamond', serif;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ======= CUSTOM SCROLLBAR ======= */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--dark); }
+  ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+
+  /* ======= NAV BAR ======= */
+  .top-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 3rem;
+    background: rgba(13,11,7,0);
+    backdrop-filter: blur(0px);
+    transition: background 0.4s, backdrop-filter 0.4s, padding 0.3s;
+    border-bottom: 1px solid transparent;
+  }
+  .top-nav.scrolled {
+    background: rgba(13,11,7,0.92);
+    backdrop-filter: blur(12px);
+    padding: 0.8rem 3rem;
+    border-bottom-color: rgba(201,168,76,0.12);
+  }
+  .nav-logo {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 0.9rem;
+    color: var(--gold);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+  }
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(240,228,194,0.6);
+    text-decoration: none;
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -3px; left: 0; right: 0;
+    height: 1px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+
+  /* Mobile menu toggle */
+  .menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 4px;
+    background: none;
+    border: none;
+  }
+  .menu-toggle span {
+    display: block;
+    width: 22px;
+    height: 1.5px;
+    background: var(--gold);
+    transition: all 0.3s;
+  }
+  .menu-toggle.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .menu-toggle.open span:nth-child(2) { opacity: 0; }
+  .menu-toggle.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  /* Mobile nav drawer */
+  .mobile-nav {
+    display: none;
+    position: fixed;
+    top: 0; right: -100%;
+    width: 75%;
+    max-width: 280px;
+    height: 100vh;
+    background: rgba(13,11,7,0.97);
+    backdrop-filter: blur(20px);
+    border-left: 1px solid rgba(201,168,76,0.15);
+    z-index: 99;
+    padding: 5rem 2.5rem 2.5rem;
+    flex-direction: column;
+    gap: 2rem;
+    transition: right 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+  }
+  .mobile-nav.open { right: 0; }
+  .mobile-nav a {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--sand);
+    text-decoration: none;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+    transition: color 0.2s, padding-left 0.2s;
+  }
+  .mobile-nav a:hover { color: var(--gold); padding-left: 0.5rem; }
+  .nav-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 98;
+  }
+  .nav-overlay.open { display: block; }
+
+  /* ======= HERO ======= */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    text-align: center;
+    padding: 7rem 2rem 4rem;
+    background:
+      radial-gradient(ellipse at 50% 100%, rgba(42,26,5,0.5) 0%, transparent 60%),
+      radial-gradient(ellipse at 20% 0%, rgba(139,58,26,0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 0%, rgba(26,92,139,0.12) 0%, transparent 50%),
+      linear-gradient(180deg, #0d0b07 0%, #12100a 60%, #0d0b07 100%);
+    overflow: hidden;
+  }
+
+  /* Floating particles */
+  .hero-particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: particleFloat linear infinite;
+    opacity: 0;
+  }
+
+  @keyframes particleFloat {
+    0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.3; }
+    100% { transform: translateY(-100px) translateX(30px); opacity: 0; }
+  }
+
+  /* Grid lines */
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 80px, rgba(201,168,76,0.02) 80px, rgba(201,168,76,0.02) 81px),
+      repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(201,168,76,0.02) 80px, rgba(201,168,76,0.02) 81px);
+  }
+
+  .hero-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.5em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    animation: fadeUp 1s ease both;
+  }
+
+  .hero-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(2.8rem, 8vw, 7rem);
+    font-weight: 900;
+    line-height: 1.05;
+    background: linear-gradient(160deg, var(--gold-light) 0%, var(--gold) 45%, #9a6a18 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: fadeUp 1s 0.2s ease both;
+    filter: drop-shadow(0 0 60px rgba(201,168,76,0.2));
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-tagline {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    font-style: italic;
+    color: rgba(240,228,194,0.55);
+    margin-top: 1.5rem;
+    max-width: 520px;
+    line-height: 1.8;
+    animation: fadeUp 1s 0.4s ease both;
+  }
+
+  .hero-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 2.5rem auto;
+    width: 200px;
+    animation: fadeUp 1s 0.5s ease both;
+  }
+  .hero-divider::before,
+  .hero-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-dim));
+  }
+  .hero-divider::after { background: linear-gradient(90deg, var(--gold-dim), transparent); }
+  .hero-divider-icon { color: var(--gold); font-size: 0.8rem; opacity: 0.6; }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeUp 1s 0.6s ease both;
+    margin-bottom: 1rem;
+  }
+
+  .btn-primary {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--dark);
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    border: none;
+    padding: 1rem 2.5rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,168,76,0.3); }
+
+  .btn-outline {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: transparent;
+    border: 1px solid rgba(201,168,76,0.4);
+    padding: 1rem 2.5rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  .btn-outline:hover { background: var(--gold-faint); border-color: var(--gold); transform: translateY(-2px); }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    animation: fadeUp 1s 1.2s ease both;
+  }
+  .scroll-hint span {
+    font-family: 'Cinzel', serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.4em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+  }
+  .scroll-arrow {
+    width: 1px;
+    height: 35px;
+    background: linear-gradient(180deg, var(--gold-dim), transparent);
+    animation: scrollPulse 2.5s ease infinite;
+  }
+
+  /* ======= TIMELINE STRIP ======= */
+  .timeline-strip {
+    background: #080603;
+    padding: 4rem 3rem;
+    overflow: hidden;
+    position: relative;
+    border-top: 1px solid rgba(201,168,76,0.08);
+    border-bottom: 1px solid rgba(201,168,76,0.08);
+  }
+  .timeline-strip::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    top: 50%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201,168,76,0.2), transparent);
+  }
+  .timeline-inner {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 0;
+    position: relative;
+    flex-wrap: wrap;
+  }
+  .tl-item {
+    flex: 1;
+    min-width: 200px;
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+    position: relative;
+    padding: 0 1.5rem;
+  }
+  .tl-item:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold-dim);
+    font-size: 1.2rem;
+  }
+  .tl-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    background: var(--dark);
+    flex-shrink: 0;
+    position: relative;
+  }
+  .tl-dot::after {
+    content: '';
+    position: absolute;
+    inset: -5px;
+    border-radius: 50%;
+    border: 1px solid rgba(201,168,76,0.2);
+  }
+  .tl-date {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+  }
+  .tl-name {
+    font-size: 1rem;
+    color: rgba(240,228,194,0.7);
+    font-style: italic;
+  }
+  #mesopotamia .tl-dot { border-color: var(--meso-light); }
+  #china .tl-dot { border-color: var(--china-light); }
+  #egypt .tl-dot { border-color: var(--egypt-light); }
+
+  /* ======= CIVILIZATION SECTIONS ======= */
+  .civ-section {
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Dual image + content layout */
+  .civ-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 100vh;
+  }
+  .civ-section:nth-child(even) .civ-inner { direction: rtl; }
+  .civ-section:nth-child(even) .civ-inner > * { direction: ltr; }
+
+  /* Images pane */
+  .civ-images {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+    min-height: 600px;
+  }
+
+  .civ-img-wrap {
+    position: relative;
+    overflow: hidden;
+  }
+  .civ-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94), filter 0.5s ease;
+    filter: saturate(0.85) brightness(0.75);
+  }
+  .civ-img-wrap:hover img {
+    transform: scale(1.06);
+    filter: saturate(1) brightness(0.85);
+  }
+
+  /* Color tint overlay */
+  .civ-img-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+  }
+
+  /* Image divider line */
+  .img-divider {
+    position: absolute;
+    left: 0; right: 0;
+    top: 50%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /* Image overlay caption */
+  .img-caption {
+    position: absolute;
+    bottom: 1rem;
+    left: 1.2rem;
+    right: 1.2rem;
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(240,228,194,0.5);
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    z-index: 2;
+    opacity: 0;
+    transform: translateY(5px);
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  .civ-img-wrap:hover .img-caption {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Content pane */
+  .civ-content {
+    padding: 5rem 3.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+  }
+
+  .civ-number {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 10rem;
+    font-weight: 900;
+    line-height: 1;
+    opacity: 0.04;
+    position: absolute;
+    top: 1.5rem;
+    right: 2rem;
+    color: white;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .civ-tag {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .civ-tag::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+  }
+
+  .civ-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(1.8rem, 3.5vw, 3rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 0.4rem;
+  }
+
+  .civ-era {
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    opacity: 0.4;
+    margin-bottom: 1.8rem;
+  }
+
+  .civ-desc {
+    font-size: 1.05rem;
+    line-height: 1.9;
+    opacity: 0.8;
+    margin-bottom: 2rem;
+    max-width: 460px;
+  }
+
+  /* Facts grid */
+  .facts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin-bottom: 2rem;
+  }
+  .fact-card {
+    padding: 0.9rem 1.1rem;
+    border-left: 2px solid;
+    background: rgba(255,255,255,0.025);
+    transition: background 0.2s;
+  }
+  .fact-card:hover { background: rgba(255,255,255,0.05); }
+  .fact-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    opacity: 0.45;
+    margin-bottom: 0.25rem;
+  }
+  .fact-value { font-size: 0.92rem; opacity: 0.9; }
+
+  /* Achievements */
+  .achievements { display: flex; flex-direction: column; gap: 0.55rem; }
+  .achievement {
+    font-size: 0.92rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    opacity: 0.75;
+    line-height: 1.5;
+    padding: 0.4rem 0.6rem;
+    border-radius: 2px;
+    transition: background 0.2s, opacity 0.2s;
+  }
+  .achievement:hover { background: rgba(255,255,255,0.03); opacity: 1; }
+  .achievement-icon { flex-shrink: 0; margin-top: 0.05rem; font-size: 1rem; }
+
+  /* Read more button */
+  .civ-cta {
+    margin-top: 1.8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    text-decoration: none;
+    opacity: 0.5;
+    transition: opacity 0.2s, gap 0.2s;
+    cursor: pointer;
+  }
+  .civ-cta:hover { opacity: 1; gap: 0.9rem; }
+  .civ-cta-arrow { transition: transform 0.2s; }
+  .civ-cta:hover .civ-cta-arrow { transform: translateX(4px); }
+
+  /* ======= CIVILIZATION COLORS ======= */
+  #mesopotamia { background: linear-gradient(160deg, #0d0b07 0%, #160d05 100%); }
+  #mesopotamia .civ-images { background: linear-gradient(160deg, #1a0e08, #2a1408); }
+  #mesopotamia .civ-img-wrap::after { background: rgba(139,58,26,0.3); }
+  #mesopotamia .img-divider { background: linear-gradient(90deg, transparent, var(--meso-light), transparent); }
+  #mesopotamia .civ-tag { color: var(--meso-light); }
+  #mesopotamia .civ-tag::before { background: var(--meso-light); }
+  #mesopotamia .civ-title { color: var(--meso-light); filter: drop-shadow(0 0 20px var(--meso-glow)); }
+  #mesopotamia .fact-card { border-color: var(--meso-color); }
+  #mesopotamia .achievement-icon { color: var(--meso-light); }
+  #mesopotamia .civ-cta { color: var(--meso-light); }
+
+  #china { background: linear-gradient(160deg, #0d0b07 0%, #160808 100%); }
+  #china .civ-images { background: linear-gradient(160deg, #1a0808, #200a0a); }
+  #china .civ-img-wrap::after { background: rgba(139,26,26,0.3); }
+  #china .img-divider { background: linear-gradient(90deg, transparent, var(--china-light), transparent); }
+  #china .civ-tag { color: var(--china-light); }
+  #china .civ-tag::before { background: var(--china-light); }
+  #china .civ-title { color: var(--china-light); filter: drop-shadow(0 0 20px var(--china-glow)); }
+  #china .fact-card { border-color: var(--china-color); }
+  #china .achievement-icon { color: var(--china-light); }
+  #china .civ-cta { color: var(--china-light); }
+
+  #egypt { background: linear-gradient(160deg, #0d0b07 0%, #06111a 100%); }
+  #egypt .civ-images { background: linear-gradient(160deg, #081420, #0a1f30); }
+  #egypt .civ-img-wrap::after { background: rgba(26,92,139,0.3); }
+  #egypt .img-divider { background: linear-gradient(90deg, transparent, var(--egypt-light), transparent); }
+  #egypt .civ-tag { color: var(--egypt-light); }
+  #egypt .civ-tag::before { background: var(--egypt-light); }
+  #egypt .civ-title { color: var(--egypt-light); filter: drop-shadow(0 0 20px var(--egypt-glow)); }
+  #egypt .fact-card { border-color: var(--egypt-color); }
+  #egypt .achievement-icon { color: var(--egypt-light); }
+  #egypt .civ-cta { color: var(--egypt-light); }
+
+  /* ======= COMPARISON TABLE ======= */
+  .compare-section {
+    padding: 8rem 4rem;
+    background: #06050300;
+    background: linear-gradient(180deg, #0a0805 0%, #080603 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .compare-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.05) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  .section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+  .section-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 1rem;
+    display: block;
+  }
+  .section-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .section-desc {
+    margin-top: 1rem;
+    font-style: italic;
+    opacity: 0.5;
+    font-size: 1rem;
+  }
+
+  .compare-wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .compare-wrapper::-webkit-scrollbar { height: 3px; }
+  .compare-wrapper::-webkit-scrollbar-thumb { background: var(--gold-dim); }
+
+  .compare-table {
+    width: 100%;
+    min-width: 580px;
+    border-collapse: collapse;
+  }
+  .compare-table thead tr {
+    border-bottom: 1px solid rgba(201,168,76,0.25);
+  }
+  .compare-table th {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 1.2rem 1.5rem;
+    text-align: left;
+  }
+  .compare-table th:nth-child(2) { color: var(--meso-light); }
+  .compare-table th:nth-child(3) { color: var(--china-light); }
+  .compare-table th:nth-child(4) { color: var(--egypt-light); }
+  .compare-table td {
+    padding: 0.9rem 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    vertical-align: top;
+  }
+  .compare-table tr { transition: background 0.2s; }
+  .compare-table tbody tr:hover td { background: rgba(201,168,76,0.03); }
+  .compare-table td:first-child {
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    white-space: nowrap;
+  }
+
+  /* ======= QUOTE / PULL SECTION ======= */
+  .quote-section {
+    padding: 6rem 3rem;
+    text-align: center;
+    background: #080603;
+    position: relative;
+    border-top: 1px solid rgba(201,168,76,0.06);
+    border-bottom: 1px solid rgba(201,168,76,0.06);
+  }
+  .quote-section blockquote {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    line-height: 1.6;
+    color: rgba(240,228,194,0.7);
+    max-width: 700px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .quote-section blockquote::before,
+  .quote-section blockquote::after {
+    content: '"';
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 5rem;
+    color: var(--gold);
+    opacity: 0.15;
+    position: absolute;
+    line-height: 1;
+  }
+  .quote-section blockquote::before { top: -1.5rem; left: -1rem; }
+  .quote-section blockquote::after { content: '"'; bottom: -3rem; right: -1rem; }
+  .quote-attribution {
+    margin-top: 2rem;
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+  }
+
+  /* ======= FOOTER ======= */
+  footer {
+    padding: 4rem 3rem;
+    background: var(--dark);
+    border-top: 1px solid rgba(201,168,76,0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+  .footer-logo {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1.2rem;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .footer-links {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .footer-links a {
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--gold); }
+  .footer-copy {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    color: rgba(122,96,48,0.4);
+    text-transform: uppercase;
+  }
+
+  /* ======= ANIMATIONS ======= */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.2; height: 35px; }
+    50% { opacity: 0.8; height: 45px; }
+  }
+
+  /* Reveal on scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(35px);
+    transition: opacity 0.9s cubic-bezier(0.25,0.46,0.45,0.94), transform 0.9s cubic-bezier(0.25,0.46,0.45,0.94);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  /* ======= RESPONSIVE ======= */
+  @media (max-width: 900px) {
+    .civ-inner {
+      grid-template-columns: 1fr;
+      min-height: auto;
+    }
+    .civ-section:nth-child(even) .civ-inner { direction: ltr; }
+    .civ-images {
+      grid-template-rows: 200px 200px;
+      min-height: auto;
+    }
+    .civ-content { padding: 3rem 2rem 3.5rem; }
+    .civ-number { font-size: 6rem; }
+    .facts-grid { grid-template-columns: 1fr 1fr; }
+    .compare-section { padding: 5rem 2rem; }
+    .quote-section { padding: 4rem 2rem; }
+    footer { padding: 3rem 2rem; }
+  }
+
+  @media (max-width: 640px) {
+    .top-nav { padding: 1rem 1.5rem; }
+    .top-nav.scrolled { padding: 0.7rem 1.5rem; }
+    .nav-links { display: none; }
+    .menu-toggle { display: flex; }
+    .mobile-nav { display: flex; }
+    .hero { padding: 6rem 1.5rem 4rem; }
+    .hero-title { font-size: clamp(2.2rem, 10vw, 3.5rem); }
+    .facts-grid { grid-template-columns: 1fr; }
+    .hero-cta { flex-direction: column; align-items: center; }
+    .btn-primary, .btn-outline { width: 100%; max-width: 260px; text-align: center; }
+    .timeline-strip { padding: 3rem 1.5rem; }
+    .tl-item { min-width: 130px; }
+    .tl-item:not(:last-child)::after { display: none; }
+    .compare-section { padding: 4rem 1.5rem; }
+    .footer-links { gap: 1rem; }
+  }
+
+  @media (max-width: 400px) {
+    .civ-images { grid-template-rows: 160px 160px; }
+  }
+
+  /* ======= PROGRESS BAR ======= */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--meso-light), var(--gold), var(--egypt-light));
+    z-index: 200;
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+
+  /* ======= BACK TO TOP ======= */
+  .back-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 40px;
+    height: 40px;
+    background: rgba(13,11,7,0.85);
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 90;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s, transform 0.3s, background 0.2s;
+    font-size: 1rem;
+    text-decoration: none;
+    backdrop-filter: blur(8px);
+  }
+  .back-to-top.visible { opacity: 1; transform: translateY(0); }
+  .back-to-top:hover { background: rgba(201,168,76,0.15); }
+</style>
+</head>
+<body>
+
+<!-- Progress bar -->
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- ======= NAV ======= -->
+<nav class="top-nav" id="topNav">
+  <a href="#" class="nav-logo">Ancient Civilizations</a>
+  <ul class="nav-links">
+    <li><a href="#mesopotamia">Mesopotamia</a></li>
+    <li><a href="#china">China</a></li>
+    <li><a href="#egypt">Egypt</a></li>
+    <li><a href="#compare">Compare</a></li>
+  </ul>
+  <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile nav -->
+<div class="nav-overlay" id="navOverlay"></div>
+<nav class="mobile-nav" id="mobileNav">
+  <a href="#mesopotamia" class="mobile-link">Mesopotamia</a>
+  <a href="#china" class="mobile-link">Ancient China</a>
+  <a href="#egypt" class="mobile-link">Ancient Egypt</a>
+  <a href="#compare" class="mobile-link">Compare</a>
+</nav>
+
+<!-- Back to top -->
+<a href="#" class="back-to-top" id="backToTop" aria-label="Back to top">↑</a>
+
+<!-- ======= HERO ======= -->
+<section class="hero" id="top">
+  <div class="hero-particles" id="particles"></div>
+  <p class="hero-eyebrow">Echoes of the Ancient World</p>
+  <h1 class="hero-title">Ancient<br>Civilizations</h1>
+  <p class="hero-tagline">Three great empires that shaped the foundations of human history — their legacies still echo across millennia.</p>
+  <div class="hero-divider"><span class="hero-divider-icon">✦</span></div>
+  <div class="hero-cta">
+    <a href="#mesopotamia" class="btn-primary">Explore Now</a>
+    <a href="#compare" class="btn-outline">Compare All Three</a>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- ======= TIMELINE STRIP ======= -->
+<div class="timeline-strip">
+  <div class="timeline-inner">
+    <div class="tl-item reveal">
+      <div class="tl-dot" style="border-color:var(--egypt-light);box-shadow:0 0 10px var(--egypt-glow)"></div>
+      <div class="tl-date">c. 3100 BCE</div>
+      <div class="tl-name">Egypt Unifies</div>
+    </div>
+    <div class="tl-item reveal reveal-delay-1">
+      <div class="tl-dot" style="border-color:var(--meso-light);box-shadow:0 0 10px var(--meso-glow)"></div>
+      <div class="tl-date">c. 3500 BCE</div>
+      <div class="tl-name">Mesopotamia Rises</div>
+    </div>
+    <div class="tl-item reveal reveal-delay-2">
+      <div class="tl-dot" style="border-color:var(--meso-light);box-shadow:0 0 10px var(--meso-glow)"></div>
+      <div class="tl-date">c. 1754 BCE</div>
+      <div class="tl-name">Code of Hammurabi</div>
+    </div>
+    <div class="tl-item reveal reveal-delay-3">
+      <div class="tl-dot" style="border-color:var(--china-light);box-shadow:0 0 10px var(--china-glow)"></div>
+      <div class="tl-date">c. 2100 BCE</div>
+      <div class="tl-name">Xia Dynasty, China</div>
+    </div>
+    <div class="tl-item reveal reveal-delay-1">
+      <div class="tl-dot" style="border-color:var(--egypt-light);box-shadow:0 0 10px var(--egypt-glow)"></div>
+      <div class="tl-date">c. 2560 BCE</div>
+      <div class="tl-name">Great Pyramid Built</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======= MESOPOTAMIA ======= -->
+<section class="civ-section" id="mesopotamia">
+  <div class="civ-inner">
+    <div class="civ-images reveal">
+      <div class="civ-img-wrap">
+        <img src="images/mesopotomiancivilisation.jpg" alt="Mesopotamian Ziggurat reconstruction" loading="lazy">
+        <div class="img-caption">Reconstruction of an ancient Mesopotamian ziggurat</div>
+      </div>
+      <div class="img-divider"></div>
+      <div class="civ-img-wrap">
+        <img src="images/mesopotomiancivilisation2.jpg" alt="Mesopotamian cylinder seal carving" loading="lazy">
+        <div class="img-caption">Cylinder seal impression depicting Mesopotamian mythology</div>
+      </div>
+    </div>
+
+    <div class="civ-content reveal reveal-delay-2">
+      <div class="civ-number">I</div>
+      <div class="civ-tag">The Cradle of Civilization</div>
+      <h2 class="civ-title">Mesopotamia</h2>
+      <p class="civ-era">c. 3500 – 539 BCE · Tigris–Euphrates Valley</p>
+      <p class="civ-desc">
+        Nestled between the Tigris and Euphrates rivers in modern-day Iraq, Mesopotamia was humanity's first urban civilization. The Sumerians, Akkadians, Babylonians, and Assyrians built towering ziggurats, codified the first laws, and left the earliest written records in history.
+      </p>
+      <div class="facts-grid">
+        <div class="fact-card">
+          <div class="fact-label">Location</div>
+          <div class="fact-value">Modern Iraq & Syria</div>
+        </div>
+        <div class="fact-card">
+          <div class="fact-label">Language</div>
+          <div class="fact-value">Sumerian, Akkadian</div>
+        </div>
+        <div class="fact-card">
+          <div class="fact-label">Writing</div>
+          <div class="fact-value">Cuneiform Script</div>
+        </div>
+        <div class="fact-card">
+          <div class="fact-label">Notable Empire</div>
+          <div class="fact-value">Babylonian Empire</div>
+        </div>
+      </div>
+      <div class="achievements">
+        <div class="achievement"><span class="achievement-icon">⚖️</span><span>Code of Hammurabi — one of the earliest written legal codes</span></div>
+        <div class="achievement"><span class="achievement-icon">✍️</span><span>Invented cuneiform script, the world's first writing system</span></div>
+        <div class="achievement"><span class="achievement-icon">🌱</span><span>Pioneered irrigation, transforming arid land into fertile farmland</span></div>
+        <div class="achievement"><span class="achievement-icon">🔭</span><span>Advanced astronomy and the base-60 mathematical system</span></div>
+      </div>
+      <a class="civ-cta" href="https://en.wikipedia.org/wiki/Mesopotamia" target="_blank" rel="noopener">
+        Learn more <span class="civ-cta-arrow">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ======= CHINA ======= -->
+<section class="civ-section" id="china">
+  <div class="civ-inner">
+    <div class="civ-images reveal">
+      <div class="civ-img-wrap">
+        <img src="images/chinesecivlisation.jpeg" alt="Ancient Chinese city panorama painting" loading="lazy">
+        <div class="img-caption">Panoramic painting of an ancient Chinese imperial city</div>
+      </div>
+      <div class="img-divider"></div>
+      <div class="civ-img-wrap">
+        <img src="images/chinesecivlisation2.jpg" alt="Forbidden City dragon balustrades" loading="lazy">
+        <div class="img-caption">Dragon-carved marble balustrades of the Forbidden City</div>
+      </div>
+    </div>
+
+    <div class="civ-content reveal reveal-delay-2">
+      <div class="civ-number">II</div>
+      <div class="civ-tag">The Middle Kingdom</div>
+      <h2 class="civ-title">Ancient China</h2>
+      <p class="civ-era">c. 2100 – 221 BCE · Yellow River Valley</p>
+      <p class="civ-desc">
+        Born along the banks of the Yellow River, Chinese civilization is one of the oldest continuous cultures on Earth. From the legendary Xia dynasty to the unification under Qin Shi Huang, ancient China gave the world silk, paper, gunpowder, and a rich philosophical tradition.
+      </p>
+      <div class="facts-grid">
+        <div class="fact-card">
+          <div class="fact-label">Location</div>
+          <div class="fact-value">Yellow & Yangtze Rivers</div>
+        </div>
+        <div class="fact-card">
+          <div class="fact-label">Script</div>
+          <div class="fact-value">Oracle Bone Script</div>
+        </div>
+        <div class="fact-card">
+          <div class="fact-label">Philosophy</div>
+          <div class="fact-value">Confucianism, Taoism</div>
+        </div>
+        <div class="fact-card">
+          <div class="fact-label">Iconic Structure</div>
+          <div class="fact-value">The Great Wall</div>
+        </div>
+      </div>
+      <div class="achievements">
+        <div class="achievement"><span class="achievement-icon">🧨</span><span>Invented gunpowder, paper, printing, and the compass</span></div>
+        <div class="achievement"><span class="achievement-icon">🧵</span><span>Discovered silk production, driving the global Silk Road trade</span></div>
+        <div class="achievement"><span class="achievement-icon">🏯</span><span>Built the Great Wall spanning thousands of kilometers</span></div>
+        <div class="achievement"><span class="achievement-icon">📚</span><span>Confucius laid the moral foundations of East Asian society</span></div>
+      </div>
+      <a class="civ-cta" href="https://en.wikipedia.org/wiki/Ancient_China" target="_blank" rel="noopener">
+        Learn more <span class="civ-cta-arrow">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ======= EGYPT ======= -->
+<section class="civ-section" id="egypt">
+  <div class="civ-inner">
+    <div class="civ-images reveal">
+      <div class="civ-img-wrap">
+        <img src="images/egyptiancivilisation.jpg" alt="Great Sphinx of Giza" loading="lazy">
+        <div class="img-caption">The Great Sphinx standing guard at Giza, Egypt</div>
+      </div>
+      <div class="img-divider"></div>
+      <div class="civ-img-wrap">
+        <img src="images/egyptiancivilisation2.webp" alt="Ancient Egyptian mural depicting daily life" loading="lazy">
+        <div class="img-caption">Vivid mural depicting pharaonic construction and ceremony</div>
+      </div>
+    </div>
+
+    <div class="civ-content reveal reveal-delay-2">
+      <div class="civ-number">III</div>
+      <div class="civ-tag">Gift of the Nile</div>
+      <h2 class="civ-title">Ancient Egypt</h2>
+      <p class="civ-era">c. 3100 – 30 BCE · Nile Valley</p>
+      <p class="civ-desc">
+        Rising from the fertile banks of the Nile, Ancient Egypt was a civilization of extraordinary ambition and artistry. For over three thousand years, the pharaohs ruled a society that built monumental pyramids, developed hieroglyphic writing, and created a rich mythology still captivating the world today.
+      </p>
+      <div class="facts-grid">
+        <div class="fact-card">
+          <div class="fact-label">Location</div>
+          <div class="fact-value">Nile River, North Africa</div>
+        </div>
+        <div class="fact-card">
+          <div class="fact-label">Writing</div>
+          <div class="fact-value">Hieroglyphics</div>
+        </div>
+        <div class="fact-card">
+          <div class="fact-label">Religion</div>
+          <div class="fact-value">Polytheistic</div>
+        </div>
+        <div class="fact-card">
+          <div class="fact-label">Ruler Title</div>
+          <div class="fact-value">Pharaoh</div>
+        </div>
+      </div>
+      <div class="achievements">
+        <div class="achievement"><span class="achievement-icon">🔺</span><span>Constructed the Great Pyramid of Giza, a Wonder of the Ancient World</span></div>
+        <div class="achievement"><span class="achievement-icon">📜</span><span>Developed papyrus and hieroglyphic script for record-keeping</span></div>
+        <div class="achievement"><span class="achievement-icon">⚕️</span><span>Advanced medicine, surgery, and anatomical knowledge</span></div>
+        <div class="achievement"><span class="achievement-icon">🗓️</span><span>Created a 365-day solar calendar that influenced modern timekeeping</span></div>
+      </div>
+      <a class="civ-cta" href="https://en.wikipedia.org/wiki/Ancient_Egypt" target="_blank" rel="noopener">
+        Learn more <span class="civ-cta-arrow">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ======= QUOTE ======= -->
+<div class="quote-section">
+  <blockquote class="reveal">
+    "Study the past if you would define the future."
+  </blockquote>
+  <p class="quote-attribution reveal reveal-delay-1">— Confucius, c. 500 BCE</p>
+</div>
+
+<!-- ======= COMPARISON TABLE ======= -->
+<section class="compare-section" id="compare">
+  <div class="section-header reveal">
+    <span class="section-eyebrow">Side by Side</span>
+    <h2 class="section-title">Civilizations at a Glance</h2>
+    <p class="section-desc">How did these three great powers shape the ancient world?</p>
+  </div>
+  <div class="compare-wrapper reveal reveal-delay-1">
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>🏛 Mesopotamia</th>
+          <th>🐉 Ancient China</th>
+          <th>🔺 Ancient Egypt</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Period</td>
+          <td>c. 3500 – 539 BCE</td>
+          <td>c. 2100 – 221 BCE</td>
+          <td>c. 3100 – 30 BCE</td>
+        </tr>
+        <tr>
+          <td>Region</td>
+          <td>Tigris–Euphrates</td>
+          <td>Yellow River Valley</td>
+          <td>Nile River Valley</td>
+        </tr>
+        <tr>
+          <td>Writing</td>
+          <td>Cuneiform</td>
+          <td>Oracle Bone Script</td>
+          <td>Hieroglyphics</td>
+        </tr>
+        <tr>
+          <td>Government</td>
+          <td>City-states & empires</td>
+          <td>Dynastic monarchy</td>
+          <td>Pharaonic rule</td>
+        </tr>
+        <tr>
+          <td>Religion</td>
+          <td>Polytheistic (Marduk, Enlil)</td>
+          <td>Ancestor worship, Taoism</td>
+          <td>Polytheistic (Ra, Osiris)</td>
+        </tr>
+        <tr>
+          <td>Key Legacy</td>
+          <td>Law, astronomy, writing</td>
+          <td>Paper, silk, philosophy</td>
+          <td>Pyramids, calendar, medicine</td>
+        </tr>
+        <tr>
+          <td>Decline</td>
+          <td>Persian conquest, 539 BCE</td>
+          <td>Qin unification, 221 BCE</td>
+          <td>Roman conquest, 30 BCE</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ======= FOOTER ======= -->
+<footer>
+  <div class="footer-logo">Ancient Civilizations</div>
+  <nav class="footer-links">
+    <a href="#mesopotamia">Mesopotamia</a>
+    <a href="#china">Ancient China</a>
+    <a href="#egypt">Ancient Egypt</a>
+    <a href="#compare">Compare</a>
+  </nav>
+  <p class="footer-copy">Echoes of a Forgotten World · History Project</p>
+</footer>
+
+<script>
+  // ---- Scroll progress bar ----
+  const progressBar = document.getElementById('progressBar');
+  const topNav = document.getElementById('topNav');
+  const backToTop = document.getElementById('backToTop');
+
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY;
+    const maxScroll = document.body.scrollHeight - window.innerHeight;
+    progressBar.style.width = (scrolled / maxScroll * 100) + '%';
+
+    // Nav scroll state
+    if (scrolled > 60) topNav.classList.add('scrolled');
+    else topNav.classList.remove('scrolled');
+
+    // Back to top visibility
+    if (scrolled > 400) backToTop.classList.add('visible');
+    else backToTop.classList.remove('visible');
+  });
+
+  // ---- Reveal on scroll ----
+  const reveals = document.querySelectorAll('.reveal');
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(el => revealObserver.observe(el));
+
+  // ---- Mobile menu ----
+  const menuToggle = document.getElementById('menuToggle');
+  const mobileNav = document.getElementById('mobileNav');
+  const navOverlay = document.getElementById('navOverlay');
+
+  function closeMobileNav() {
+    menuToggle.classList.remove('open');
+    mobileNav.classList.remove('open');
+    navOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  menuToggle.addEventListener('click', () => {
+    const isOpen = mobileNav.classList.toggle('open');
+    menuToggle.classList.toggle('open');
+    navOverlay.classList.toggle('open');
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  });
+
+  navOverlay.addEventListener('click', closeMobileNav);
+
+  document.querySelectorAll('.mobile-link').forEach(link => {
+    link.addEventListener('click', closeMobileNav);
+  });
+
+  // ---- Floating particles ----
+  const particlesContainer = document.getElementById('particles');
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.width = p.style.height = (Math.random() * 2 + 1) + 'px';
+    p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+    p.style.animationDelay = (Math.random() * 15) + 's';
+    p.style.opacity = '0';
+    particlesContainer.appendChild(p);
+  }
+
+  // ---- Smooth scroll with offset for fixed nav ----
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      const href = this.getAttribute('href');
+      if (href === '#') return;
+      e.preventDefault();
+      const target = document.querySelector(href);
+      if (target) {
+        const offset = 70;
+        const y = target.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+</body>
+</html>
