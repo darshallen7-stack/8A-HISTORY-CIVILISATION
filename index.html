@@ -39,13 +39,67 @@
   ::-webkit-scrollbar-track { background: var(--dark); }
   ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
 
-  /* ======= PERFORMANCE: GPU LAYERS ======= */
+  /* ---- GPU LAYERS ---- */
   .hero-particles, .dyk-track, .timeline-track, .civ-img-wrap img {
     will-change: transform;
     transform: translateZ(0);
   }
 
-  /* ======= PROGRESS BAR ======= */
+  /* ---- PERF QUALITY CLASSES ---- */
+  /* quality-low: strip expensive effects */
+  body.quality-low .hero-particles { display: none !important; }
+  body.quality-low .civ-img-wrap img { filter: none !important; transition: none !important; }
+  body.quality-low .civ-img-wrap:hover img { transform: none !important; }
+  body.quality-low * { backdrop-filter: none !important; }
+  body.quality-low .tl-event-dot { animation: none !important; }
+  body.quality-low .top-nav { backdrop-filter: none !important; background: rgba(13,11,7,0.96) !important; }
+  body.quality-low .mobile-nav { backdrop-filter: none !important; }
+  body.quality-low .back-to-top { backdrop-filter: none !important; }
+  body.quality-low .dyk-track { animation-duration: 60s !important; }
+
+  /* quality-medium: reduce but keep some effects */
+  body.quality-medium .hero-particles .particle:nth-child(n+10) { display: none !important; }
+  body.quality-medium .civ-img-wrap img { transition-duration: 0.3s !important; }
+  body.quality-medium .tl-event-dot { animation-duration: 6s !important; }
+
+  /* quality-high (default): everything runs */
+
+  /* ---- ADAPTIVE BADGE ---- */
+  .perf-badge {
+    position: fixed;
+    bottom: 5rem;
+    right: 2rem;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.3rem;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .perf-badge.show { opacity: 1; }
+  .perf-badge-inner {
+    font-family: 'Cinzel', serif;
+    font-size: 0.5rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.65rem;
+    border: 1px solid;
+    border-radius: 1px;
+    white-space: nowrap;
+  }
+  .perf-badge-inner.badge-high  { color: #6bde8a; border-color: rgba(107,222,138,0.3); background: rgba(107,222,138,0.06); }
+  .perf-badge-inner.badge-medium { color: var(--gold); border-color: rgba(201,168,76,0.3); background: rgba(201,168,76,0.06); }
+  .perf-badge-inner.badge-low   { color: #de6b6b; border-color: rgba(222,107,107,0.3); background: rgba(222,107,107,0.06); }
+  .perf-badge-fps {
+    font-family: 'Cinzel', serif;
+    font-size: 0.45rem;
+    letter-spacing: 0.2em;
+    color: rgba(240,228,194,0.3);
+  }
+
+  /* ---- PROGRESS BAR ---- */
   .progress-bar {
     position: fixed;
     top: 0; left: 0;
@@ -56,7 +110,7 @@
     transition: width 0.1s linear;
   }
 
-  /* ======= NAV ======= */
+  /* ---- NAV ---- */
   .top-nav {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -168,7 +222,7 @@
   }
   .nav-overlay.open { display: block; }
 
-  /* ======= HERO ======= */
+  /* ---- HERO ---- */
   .hero {
     min-height: 100vh;
     display: flex;
@@ -344,7 +398,7 @@
     animation: scrollPulse 2.5s ease infinite;
   }
 
-  /* ======= INTERACTIVE TIMELINE ======= */
+  /* ---- TIMELINE ---- */
   .timeline-section {
     background: #080603;
     padding: 5rem 3rem 4rem;
@@ -353,11 +407,7 @@
     border-top: 1px solid rgba(201,168,76,0.08);
     border-bottom: 1px solid rgba(201,168,76,0.08);
   }
-
-  .timeline-section-header {
-    text-align: center;
-    margin-bottom: 3rem;
-  }
+  .timeline-section-header { text-align: center; margin-bottom: 3rem; }
   .timeline-section-header .section-eyebrow {
     font-family: 'Cinzel', serif;
     font-size: 0.6rem;
@@ -398,7 +448,6 @@
     padding: 0 4rem 0 4rem;
     padding-top: 200px;
   }
-
   .timeline-track::before {
     content: '';
     position: absolute;
@@ -420,59 +469,24 @@
   .tl-event:hover { transform: translateY(-4px); }
   .tl-event:hover .tl-event-dot { transform: scale(1.4); }
   .tl-event:hover .tl-event-name { opacity: 1; }
-
   .tl-event.above .tl-event-label { order: -1; margin-bottom: 0.5rem; margin-top: 0; }
   .tl-event.below .tl-event-label { order: 1; margin-top: 0.5rem; margin-bottom: 0; }
 
-  .tl-event-label {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.25rem;
-    max-width: 120px;
-    text-align: center;
-  }
-  .tl-event-date {
-    font-family: 'Cinzel', serif;
-    font-size: 0.6rem;
-    letter-spacing: 0.1em;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-  .tl-event-name {
-    font-size: 0.8rem;
-    font-style: italic;
-    opacity: 0.7;
-    line-height: 1.35;
-    transition: opacity 0.2s;
-  }
-
-  .tl-event-connector {
-    width: 1px;
-    background: linear-gradient(180deg, transparent, currentColor);
-    opacity: 0.3;
-  }
+  .tl-event-label { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; max-width: 120px; text-align: center; }
+  .tl-event-date { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.1em; font-weight: 600; white-space: nowrap; }
+  .tl-event-name { font-size: 0.8rem; font-style: italic; opacity: 0.7; line-height: 1.35; transition: opacity 0.2s; }
+  .tl-event-connector { width: 1px; background: linear-gradient(180deg, transparent, currentColor); opacity: 0.3; }
   .tl-event.above .tl-event-connector { height: 30px; }
   .tl-event.below .tl-event-connector { height: 30px; transform: rotate(180deg); }
-
   .tl-event-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    border: 2px solid currentColor;
-    background: var(--dark);
-    flex-shrink: 0;
-    transition: transform 0.3s ease;
-    position: relative;
-    z-index: 2;
-    animation: dotPulse 3s ease infinite;
+    width: 12px; height: 12px; border-radius: 50%; border: 2px solid currentColor;
+    background: var(--dark); flex-shrink: 0; transition: transform 0.3s ease;
+    position: relative; z-index: 2; animation: dotPulse 3s ease infinite;
   }
-
   @keyframes dotPulse {
     0%, 100% { box-shadow: 0 0 0 0 transparent; }
     50% { box-shadow: 0 0 8px 2px currentColor; opacity: 0.6; }
   }
-
   .tl-event-bottom { height: 40px; }
 
   .tl-tooltip {
@@ -490,351 +504,96 @@
     transition: opacity 0.2s, transform 0.2s;
     z-index: 20;
   }
-  .tl-event:hover .tl-tooltip {
-    opacity: 1;
-    transform: translateX(-50%) scale(1);
-  }
-  .tl-event.below .tl-tooltip {
-    bottom: auto;
-    top: calc(100% + 12px);
-  }
-  .tl-tooltip-title {
-    font-family: 'Cinzel', serif;
-    font-size: 0.65rem;
-    letter-spacing: 0.1em;
-    margin-bottom: 0.4rem;
-  }
-  .tl-tooltip-desc {
-    font-size: 0.82rem;
-    font-style: italic;
-    opacity: 0.7;
-    line-height: 1.5;
-  }
+  .tl-event:hover .tl-tooltip { opacity: 1; transform: translateX(-50%) scale(1); }
+  .tl-event.below .tl-tooltip { bottom: auto; top: calc(100% + 12px); }
+  .tl-tooltip-title { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.1em; margin-bottom: 0.4rem; }
+  .tl-tooltip-desc { font-size: 0.82rem; font-style: italic; opacity: 0.7; line-height: 1.5; }
 
-  /* ======= DID YOU KNOW STRIP ======= */
-  .did-you-know {
-    padding: 0;
-    overflow: hidden;
-    position: relative;
-  }
-  .dyk-track {
-    display: flex;
-    animation: marquee 40s linear infinite;
-    width: max-content;
-  }
+  /* ---- DYK ---- */
+  .did-you-know { padding: 0; overflow: hidden; position: relative; }
+  .dyk-track { display: flex; animation: marquee 40s linear infinite; width: max-content; }
   .dyk-track:hover { animation-play-state: paused; }
   .dyk-item {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    padding: 1rem 2.5rem;
-    border-right: 1px solid rgba(201,168,76,0.1);
-    white-space: nowrap;
-    font-size: 0.85rem;
-    font-style: italic;
-    color: rgba(240,228,194,0.5);
-    cursor: default;
-    transition: color 0.2s;
+    display: flex; align-items: center; gap: 0.8rem;
+    padding: 1rem 2.5rem; border-right: 1px solid rgba(201,168,76,0.1);
+    white-space: nowrap; font-size: 0.85rem; font-style: italic;
+    color: rgba(240,228,194,0.5); cursor: default; transition: color 0.2s;
   }
   .dyk-item:hover { color: rgba(240,228,194,0.85); }
   .dyk-icon { font-size: 1rem; flex-shrink: 0; }
-  @keyframes marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-  }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-  /* ======= CIVILIZATION SECTIONS ======= */
+  /* ---- CIV SECTIONS ---- */
   .civ-section { position: relative; overflow: hidden; }
-
-  .civ-inner {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    min-height: 100vh;
-  }
+  .civ-inner { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; }
   .civ-section:nth-child(even) .civ-inner { direction: rtl; }
   .civ-section:nth-child(even) .civ-inner > * { direction: ltr; }
-
-  .civ-images {
-    display: grid;
-    grid-template-rows: 1fr 1fr;
-    position: relative;
-    overflow: hidden;
-    min-height: 600px;
-  }
-
-  .civ-img-wrap {
-    position: relative;
-    overflow: hidden;
-  }
+  .civ-images { display: grid; grid-template-rows: 1fr 1fr; position: relative; overflow: hidden; min-height: 600px; }
+  .civ-img-wrap { position: relative; overflow: hidden; }
   .civ-img-wrap img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+    width: 100%; height: 100%; object-fit: cover; display: block;
     transition: transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94), filter 0.5s ease;
     filter: saturate(0.85) brightness(0.75);
   }
-  .civ-img-wrap:hover img {
-    transform: scale(1.04);
-    filter: saturate(1) brightness(0.85);
-  }
-  .civ-img-wrap::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    mix-blend-mode: multiply;
-    pointer-events: none;
-  }
-
-  .img-divider {
-    position: absolute;
-    left: 0; right: 0;
-    top: 50%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    z-index: 2;
-    pointer-events: none;
-  }
-
+  .civ-img-wrap:hover img { transform: scale(1.04); filter: saturate(1) brightness(0.85); }
+  .civ-img-wrap::after { content: ''; position: absolute; inset: 0; mix-blend-mode: multiply; pointer-events: none; }
+  .img-divider { position: absolute; left: 0; right: 0; top: 50%; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); z-index: 2; pointer-events: none; }
   .img-caption {
-    position: absolute;
-    bottom: 1rem;
-    left: 1.2rem;
-    right: 1.2rem;
-    font-family: 'Cinzel', serif;
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: rgba(240,228,194,0.5);
-    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-    z-index: 2;
-    opacity: 0;
-    transform: translateY(5px);
-    transition: opacity 0.3s, transform 0.3s;
+    position: absolute; bottom: 1rem; left: 1.2rem; right: 1.2rem;
+    font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(240,228,194,0.5); text-shadow: 0 1px 3px rgba(0,0,0,0.8); z-index: 2;
+    opacity: 0; transform: translateY(5px); transition: opacity 0.3s, transform 0.3s;
   }
-  .civ-img-wrap:hover .img-caption {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  .civ-img-wrap:hover .img-caption { opacity: 1; transform: translateY(0); }
+  .civ-content { padding: 5rem 3.5rem; display: flex; flex-direction: column; justify-content: center; position: relative; }
+  .civ-number { font-family: 'Cinzel Decorative', serif; font-size: 10rem; font-weight: 900; line-height: 1; opacity: 0.04; position: absolute; top: 1.5rem; right: 2rem; color: white; pointer-events: none; user-select: none; }
+  .civ-tag { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.45em; text-transform: uppercase; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.8rem; }
+  .civ-tag::before { content: ''; display: inline-block; width: 24px; height: 1px; }
+  .civ-title { font-family: 'Cinzel Decorative', serif; font-size: clamp(1.8rem, 3.5vw, 3rem); font-weight: 700; line-height: 1.1; margin-bottom: 0.4rem; }
+  .civ-era { font-family: 'Cinzel', serif; font-size: 0.8rem; letter-spacing: 0.15em; opacity: 0.4; margin-bottom: 1.8rem; }
+  .civ-desc { font-size: 1.05rem; line-height: 1.9; opacity: 0.8; margin-bottom: 2rem; max-width: 460px; }
 
-  .civ-content {
-    padding: 5rem 3.5rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    position: relative;
-  }
-
-  .civ-number {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 10rem;
-    font-weight: 900;
-    line-height: 1;
-    opacity: 0.04;
-    position: absolute;
-    top: 1.5rem;
-    right: 2rem;
-    color: white;
-    pointer-events: none;
-    user-select: none;
-  }
-
-  .civ-tag {
-    font-family: 'Cinzel', serif;
-    font-size: 0.65rem;
-    letter-spacing: 0.45em;
-    text-transform: uppercase;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-  }
-  .civ-tag::before {
-    content: '';
-    display: inline-block;
-    width: 24px;
-    height: 1px;
-  }
-
-  .civ-title {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: clamp(1.8rem, 3.5vw, 3rem);
-    font-weight: 700;
-    line-height: 1.1;
-    margin-bottom: 0.4rem;
-  }
-
-  .civ-era {
-    font-family: 'Cinzel', serif;
-    font-size: 0.8rem;
-    letter-spacing: 0.15em;
-    opacity: 0.4;
-    margin-bottom: 1.8rem;
-  }
-
-  .civ-desc {
-    font-size: 1.05rem;
-    line-height: 1.9;
-    opacity: 0.8;
-    margin-bottom: 2rem;
-    max-width: 460px;
-  }
-
-  /* ======= FACTS GRID ======= */
-  .facts-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.8rem;
-    margin-bottom: 2rem;
-  }
-  .fact-card {
-    padding: 0.9rem 1.1rem;
-    border-left: 2px solid;
-    background: rgba(255,255,255,0.025);
-    transition: background 0.2s, transform 0.2s;
-    cursor: default;
-  }
-  .fact-card:hover {
-    background: rgba(255,255,255,0.06);
-    transform: translateX(4px);
-  }
-  .fact-label {
-    font-family: 'Cinzel', serif;
-    font-size: 0.55rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    opacity: 0.45;
-    margin-bottom: 0.25rem;
-  }
+  .facts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 2rem; }
+  .fact-card { padding: 0.9rem 1.1rem; border-left: 2px solid; background: rgba(255,255,255,0.025); transition: background 0.2s, transform 0.2s; cursor: default; }
+  .fact-card:hover { background: rgba(255,255,255,0.06); transform: translateX(4px); }
+  .fact-label { font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.3em; text-transform: uppercase; opacity: 0.45; margin-bottom: 0.25rem; }
   .fact-value { font-size: 0.92rem; opacity: 0.9; }
 
-  /* ======= ACHIEVEMENTS ======= */
-  .achievements-label {
-    font-family: 'Cinzel', serif;
-    font-size: 0.58rem;
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    opacity: 0.4;
-    margin-bottom: 0.6rem;
-  }
-
+  .achievements-label { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.35em; text-transform: uppercase; opacity: 0.4; margin-bottom: 0.6rem; }
   .achievements { display: flex; flex-direction: column; gap: 0.4rem; }
-
   .achievement {
-    font-size: 0.92rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 0.7rem;
-    line-height: 1.5;
-    padding: 0.5rem 0.7rem;
-    border-radius: 2px;
-    cursor: pointer;
-    border: 1px solid transparent;
-    transition: background 0.2s, border-color 0.2s;
-    position: relative;
-    overflow: hidden;
+    font-size: 0.92rem; display: flex; align-items: flex-start; gap: 0.7rem; line-height: 1.5;
+    padding: 0.5rem 0.7rem; border-radius: 2px; cursor: pointer; border: 1px solid transparent;
+    transition: background 0.2s, border-color 0.2s; position: relative; overflow: hidden;
   }
-  .achievement:hover {
-    background: rgba(255,255,255,0.04);
-    border-color: rgba(255,255,255,0.06);
-  }
-  .achievement.expanded {
-    background: rgba(255,255,255,0.05);
-  }
-
-  .achievement-main {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.7rem;
-    width: 100%;
-  }
-
+  .achievement:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.06); }
+  .achievement.expanded { background: rgba(255,255,255,0.05); }
+  .achievement-main { display: flex; align-items: flex-start; gap: 0.7rem; width: 100%; }
   .achievement-icon { flex-shrink: 0; margin-top: 0.05rem; font-size: 1rem; }
-
   .achievement-text { flex: 1; }
   .achievement-title { opacity: 0.85; display: block; }
   .achievement-detail {
-    font-size: 0.82rem;
-    font-style: italic;
-    opacity: 0;
-    max-height: 0;
-    overflow: hidden;
+    font-size: 0.82rem; font-style: italic; opacity: 0; max-height: 0; overflow: hidden;
     transition: opacity 0.3s, max-height 0.4s cubic-bezier(0.25,0.46,0.45,0.94), margin-top 0.3s;
-    color: rgba(240,228,194,0.6);
-    line-height: 1.5;
-    margin-top: 0;
+    color: rgba(240,228,194,0.6); line-height: 1.5; margin-top: 0;
   }
-  .achievement.expanded .achievement-detail {
-    opacity: 1;
-    max-height: 100px;
-    margin-top: 0.4rem;
-  }
-
-  .achievement-expand-hint {
-    font-family: 'Cinzel', serif;
-    font-size: 0.5rem;
-    letter-spacing: 0.2em;
-    opacity: 0.3;
-    transition: opacity 0.2s;
-    flex-shrink: 0;
-    align-self: center;
-    margin-left: auto;
-  }
+  .achievement.expanded .achievement-detail { opacity: 1; max-height: 100px; margin-top: 0.4rem; }
+  .achievement-expand-hint { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.2em; opacity: 0.3; transition: opacity 0.2s; flex-shrink: 0; align-self: center; margin-left: auto; }
   .achievement:hover .achievement-expand-hint { opacity: 0.6; }
   .achievement.expanded .achievement-expand-hint { opacity: 0; }
-
-  .civ-cta {
-    margin-top: 1.8rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-family: 'Cinzel', serif;
-    font-size: 0.65rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    text-decoration: none;
-    opacity: 0.5;
-    transition: opacity 0.2s, gap 0.2s;
-    cursor: pointer;
-  }
+  .civ-cta { margin-top: 1.8rem; display: inline-flex; align-items: center; gap: 0.6rem; font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; text-decoration: none; opacity: 0.5; transition: opacity 0.2s, gap 0.2s; cursor: pointer; }
   .civ-cta:hover { opacity: 1; gap: 0.9rem; }
   .civ-cta-arrow { transition: transform 0.2s; }
   .civ-cta:hover .civ-cta-arrow { transform: translateX(4px); }
 
-  /* ======= NARRATIVE BANNER ======= */
-  .narrative-banner {
-    padding: 3.5rem 4rem;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .narrative-banner::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at 50% 50%, rgba(201,168,76,0.04) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .narrative-line {
-    font-family: 'EB Garamond', serif;
-    font-style: italic;
-    font-size: clamp(1rem, 2.5vw, 1.5rem);
-    color: rgba(240,228,194,0.4);
-    letter-spacing: 0.03em;
-    line-height: 1.6;
-    max-width: 640px;
-    margin: 0 auto;
-    transition: color 0.3s;
-  }
+  /* ---- NARRATIVE BANNER ---- */
+  .narrative-banner { padding: 3.5rem 4rem; text-align: center; position: relative; overflow: hidden; }
+  .narrative-banner::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, rgba(201,168,76,0.04) 0%, transparent 70%); pointer-events: none; }
+  .narrative-line { font-family: 'EB Garamond', serif; font-style: italic; font-size: clamp(1rem, 2.5vw, 1.5rem); color: rgba(240,228,194,0.4); letter-spacing: 0.03em; line-height: 1.6; max-width: 640px; margin: 0 auto; transition: color 0.3s; }
   .narrative-banner:hover .narrative-line { color: rgba(240,228,194,0.7); }
-  .narrative-accent {
-    color: var(--gold);
-    opacity: 0.8;
-    font-style: normal;
-    font-weight: 600;
-  }
+  .narrative-accent { color: var(--gold); opacity: 0.8; font-style: normal; font-weight: 600; }
 
-  /* ======= CIVILIZATION COLORS ======= */
+  /* ---- CIV COLORS ---- */
   #mesopotamia { background: linear-gradient(160deg, #0d0b07 0%, #160d05 100%); }
   #mesopotamia .civ-images { background: linear-gradient(160deg, #1a0e08, #2a1408); }
   #mesopotamia .civ-img-wrap::after { background: rgba(139,58,26,0.3); }
@@ -874,422 +633,105 @@
   #egypt .achievement.expanded { border-color: rgba(42,139,212,0.2); background: rgba(42,139,212,0.05); }
   #egypt .narrative-accent { color: var(--egypt-light); }
 
-  /* ======= QUIZ SECTION ======= */
-  .quiz-section {
-    padding: 7rem 3rem;
-    background: linear-gradient(180deg, #080603 0%, #0a0805 100%);
-    position: relative;
-    border-top: 1px solid rgba(201,168,76,0.07);
-    overflow: hidden;
-  }
-  .quiz-section::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.04) 0%, transparent 50%);
-    pointer-events: none;
-  }
+  /* ---- QUIZ ---- */
+  .quiz-section { padding: 7rem 3rem; background: linear-gradient(180deg, #080603 0%, #0a0805 100%); position: relative; border-top: 1px solid rgba(201,168,76,0.07); overflow: hidden; }
+  .quiz-section::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.04) 0%, transparent 50%); pointer-events: none; }
   .quiz-inner { max-width: 700px; margin: 0 auto; }
   .quiz-header { text-align: center; margin-bottom: 3rem; }
-  .quiz-progress-track {
-    width: 100%;
-    height: 2px;
-    background: rgba(201,168,76,0.1);
-    margin-bottom: 3rem;
-    position: relative;
-  }
-  .quiz-progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--meso-light), var(--gold), var(--egypt-light));
-    transition: width 0.6s cubic-bezier(0.25,0.46,0.45,0.94);
-    width: 0%;
-  }
-  .quiz-q-counter {
-    position: absolute;
-    right: 0;
-    top: 8px;
-    font-family: 'Cinzel', serif;
-    font-size: 0.55rem;
-    letter-spacing: 0.3em;
-    color: var(--gold-dim);
-  }
-
+  .quiz-progress-track { width: 100%; height: 2px; background: rgba(201,168,76,0.1); margin-bottom: 3rem; position: relative; }
+  .quiz-progress-fill { height: 100%; background: linear-gradient(90deg, var(--meso-light), var(--gold), var(--egypt-light)); transition: width 0.6s cubic-bezier(0.25,0.46,0.45,0.94); width: 0%; }
+  .quiz-q-counter { position: absolute; right: 0; top: 8px; font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.3em; color: var(--gold-dim); }
   .quiz-card { position: relative; min-height: 280px; }
-
-  .quiz-question-wrap {
-    display: none;
-    flex-direction: column;
-    gap: 1.5rem;
-    animation: fadeUp 0.4s ease both;
-  }
+  .quiz-question-wrap { display: none; flex-direction: column; gap: 1.5rem; animation: fadeUp 0.4s ease both; }
   .quiz-question-wrap.active { display: flex; }
-
-  .quiz-q-tag {
-    font-family: 'Cinzel', serif;
-    font-size: 0.6rem;
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    color: var(--gold-dim);
-  }
-
-  .quiz-question {
-    font-family: 'EB Garamond', serif;
-    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
-    line-height: 1.6;
-    color: var(--sand);
-    font-style: italic;
-  }
-
+  .quiz-q-tag { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--gold-dim); }
+  .quiz-question { font-family: 'EB Garamond', serif; font-size: clamp(1.1rem, 2.5vw, 1.5rem); line-height: 1.6; color: var(--sand); font-style: italic; }
   .quiz-options { display: flex; flex-direction: column; gap: 0.6rem; }
-
-  .quiz-option {
-    padding: 0.85rem 1.2rem;
-    background: rgba(255,255,255,0.025);
-    border: 1px solid rgba(201,168,76,0.12);
-    cursor: pointer;
-    font-family: 'EB Garamond', serif;
-    font-size: 1rem;
-    color: var(--sand);
-    text-align: left;
-    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-  }
-  .quiz-option:hover:not(.answered) {
-    background: rgba(201,168,76,0.07);
-    border-color: rgba(201,168,76,0.3);
-    transform: translateX(4px);
-  }
+  .quiz-option { padding: 0.85rem 1.2rem; background: rgba(255,255,255,0.025); border: 1px solid rgba(201,168,76,0.12); cursor: pointer; font-family: 'EB Garamond', serif; font-size: 1rem; color: var(--sand); text-align: left; transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease; position: relative; overflow: hidden; display: flex; align-items: center; gap: 0.8rem; }
+  .quiz-option:hover:not(.answered) { background: rgba(201,168,76,0.07); border-color: rgba(201,168,76,0.3); transform: translateX(4px); }
   .quiz-option.correct { background: rgba(42,212,100,0.08); border-color: rgba(42,212,100,0.4); color: #7eff9f; }
   .quiz-option.wrong { background: rgba(212,42,42,0.08); border-color: rgba(212,42,42,0.3); color: rgba(240,228,194,0.4); }
   .quiz-option.revealed { background: rgba(42,212,100,0.05); border-color: rgba(42,212,100,0.2); color: rgba(127,255,160,0.6); }
-  .quiz-option-letter {
-    font-family: 'Cinzel', serif;
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
-    opacity: 0.4;
-    flex-shrink: 0;
-    width: 16px;
-  }
-
-  .quiz-feedback {
-    display: none;
-    padding: 0.9rem 1.2rem;
-    font-size: 0.9rem;
-    font-style: italic;
-    line-height: 1.5;
-    border-left: 2px solid;
-    animation: fadeUp 0.3s ease both;
-  }
+  .quiz-option-letter { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.2em; opacity: 0.4; flex-shrink: 0; width: 16px; }
+  .quiz-feedback { display: none; padding: 0.9rem 1.2rem; font-size: 0.9rem; font-style: italic; line-height: 1.5; border-left: 2px solid; animation: fadeUp 0.3s ease both; }
   .quiz-feedback.show { display: block; }
   .quiz-feedback.correct-fb { border-color: rgba(42,212,100,0.5); color: rgba(127,255,160,0.8); }
   .quiz-feedback.wrong-fb { border-color: rgba(212,42,42,0.4); color: rgba(240,228,194,0.6); }
-
-  .quiz-next-btn {
-    display: none;
-    font-family: 'Cinzel', serif;
-    font-size: 0.65rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--gold);
-    background: transparent;
-    border: 1px solid rgba(201,168,76,0.3);
-    padding: 0.8rem 2rem;
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s;
-    margin-top: 0.5rem;
-    align-self: flex-start;
-  }
+  .quiz-next-btn { display: none; font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); background: transparent; border: 1px solid rgba(201,168,76,0.3); padding: 0.8rem 2rem; cursor: pointer; transition: background 0.2s, border-color 0.2s; margin-top: 0.5rem; align-self: flex-start; }
   .quiz-next-btn:hover { background: var(--gold-faint); border-color: var(--gold); }
   .quiz-next-btn.show { display: block; }
-
-  .quiz-result {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 1.5rem;
-    padding: 3rem 0;
-    animation: fadeUp 0.5s ease both;
-  }
+  .quiz-result { display: none; flex-direction: column; align-items: center; text-align: center; gap: 1.5rem; padding: 3rem 0; animation: fadeUp 0.5s ease both; }
   .quiz-result.show { display: flex; }
-  .quiz-result-score {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: clamp(3rem, 8vw, 5rem);
-    background: linear-gradient(135deg, var(--gold-light), var(--gold));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .quiz-result-label {
-    font-family: 'Cinzel', serif;
-    font-size: 0.7rem;
-    letter-spacing: 0.4em;
-    color: var(--gold-dim);
-    text-transform: uppercase;
-  }
-  .quiz-result-msg {
-    font-style: italic;
-    font-size: 1.05rem;
-    opacity: 0.7;
-    max-width: 380px;
-    line-height: 1.7;
-  }
-  .quiz-restart-btn {
-    font-family: 'Cinzel', serif;
-    font-size: 0.65rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--dark);
-    background: linear-gradient(135deg, var(--gold-light), var(--gold));
-    border: none;
-    padding: 0.9rem 2.2rem;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
+  .quiz-result-score { font-family: 'Cinzel Decorative', serif; font-size: clamp(3rem, 8vw, 5rem); background: linear-gradient(135deg, var(--gold-light), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .quiz-result-label { font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.4em; color: var(--gold-dim); text-transform: uppercase; }
+  .quiz-result-msg { font-style: italic; font-size: 1.05rem; opacity: 0.7; max-width: 380px; line-height: 1.7; }
+  .quiz-restart-btn { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--dark); background: linear-gradient(135deg, var(--gold-light), var(--gold)); border: none; padding: 0.9rem 2.2rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
   .quiz-restart-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(201,168,76,0.25); }
 
-  /* ======= COMPARISON TABLE ======= */
-  .compare-section {
-    padding: 8rem 4rem;
-    background: linear-gradient(180deg, #0a0805 0%, #080603 100%);
-    position: relative;
-    overflow: hidden;
-  }
-  .compare-section::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.05) 0%, transparent 55%);
-    pointer-events: none;
-  }
+  /* ---- COMPARE ---- */
+  .compare-section { padding: 8rem 4rem; background: linear-gradient(180deg, #0a0805 0%, #080603 100%); position: relative; overflow: hidden; }
+  .compare-section::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.05) 0%, transparent 55%); pointer-events: none; }
   .section-header { text-align: center; margin-bottom: 4rem; }
-  .section-eyebrow {
-    font-family: 'Cinzel', serif;
-    font-size: 0.65rem;
-    letter-spacing: 0.5em;
-    text-transform: uppercase;
-    color: var(--gold-dim);
-    margin-bottom: 1rem;
-    display: block;
-  }
-  .section-title {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: clamp(1.6rem, 3.5vw, 2.8rem);
-    background: linear-gradient(135deg, var(--gold-light), var(--gold));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+  .section-eyebrow { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.5em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 1rem; display: block; }
+  .section-title { font-family: 'Cinzel Decorative', serif; font-size: clamp(1.6rem, 3.5vw, 2.8rem); background: linear-gradient(135deg, var(--gold-light), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
   .section-desc { margin-top: 1rem; font-style: italic; opacity: 0.5; font-size: 1rem; }
-
-  .compare-wrapper {
-    max-width: 1000px;
-    margin: 0 auto;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
+  .compare-wrapper { max-width: 1000px; margin: 0 auto; overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .compare-wrapper::-webkit-scrollbar { height: 3px; }
   .compare-wrapper::-webkit-scrollbar-thumb { background: var(--gold-dim); }
-
-  .compare-table {
-    width: 100%;
-    min-width: 580px;
-    border-collapse: collapse;
-  }
+  .compare-table { width: 100%; min-width: 580px; border-collapse: collapse; }
   .compare-table thead tr { border-bottom: 1px solid rgba(201,168,76,0.25); }
-  .compare-table th {
-    font-family: 'Cinzel', serif;
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    padding: 1.2rem 1.5rem;
-    text-align: left;
-  }
+  .compare-table th { font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; padding: 1.2rem 1.5rem; text-align: left; }
   .compare-table th:nth-child(2) { color: var(--meso-light); }
   .compare-table th:nth-child(3) { color: var(--china-light); }
   .compare-table th:nth-child(4) { color: var(--egypt-light); }
-  .compare-table td {
-    padding: 0.9rem 1.5rem;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    font-size: 0.95rem;
-    line-height: 1.5;
-    vertical-align: top;
-    transition: background 0.2s;
-  }
+  .compare-table td { padding: 0.9rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.95rem; line-height: 1.5; vertical-align: top; transition: background 0.2s; }
   .compare-table tr { transition: background 0.2s; }
   .compare-table tbody tr:hover td { background: rgba(201,168,76,0.03); }
-  .compare-table td:first-child {
-    font-family: 'Cinzel', serif;
-    font-size: 0.62rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--gold-dim);
-    white-space: nowrap;
-  }
+  .compare-table td:first-child { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold-dim); white-space: nowrap; }
 
-  /* ======= QUOTE ======= */
-  .quote-section {
-    padding: 6rem 3rem;
-    text-align: center;
-    background: #080603;
-    position: relative;
-    border-top: 1px solid rgba(201,168,76,0.06);
-    border-bottom: 1px solid rgba(201,168,76,0.06);
-  }
-  .quote-section blockquote {
-    font-family: 'EB Garamond', serif;
-    font-style: italic;
-    font-size: clamp(1.4rem, 3vw, 2.2rem);
-    line-height: 1.6;
-    color: rgba(240,228,194,0.7);
-    max-width: 700px;
-    margin: 0 auto;
-    position: relative;
-  }
-  .quote-section blockquote::before,
-  .quote-section blockquote::after {
-    content: '\201C';
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 5rem;
-    color: var(--gold);
-    opacity: 0.15;
-    position: absolute;
-    line-height: 1;
-  }
+  /* ---- QUOTE ---- */
+  .quote-section { padding: 6rem 3rem; text-align: center; background: #080603; position: relative; border-top: 1px solid rgba(201,168,76,0.06); border-bottom: 1px solid rgba(201,168,76,0.06); }
+  .quote-section blockquote { font-family: 'EB Garamond', serif; font-style: italic; font-size: clamp(1.4rem, 3vw, 2.2rem); line-height: 1.6; color: rgba(240,228,194,0.7); max-width: 700px; margin: 0 auto; position: relative; }
+  .quote-section blockquote::before, .quote-section blockquote::after { content: '\201C'; font-family: 'Cinzel Decorative', serif; font-size: 5rem; color: var(--gold); opacity: 0.15; position: absolute; line-height: 1; }
   .quote-section blockquote::before { top: -1.5rem; left: -1rem; }
   .quote-section blockquote::after { content: '\201D'; bottom: -3rem; right: -1rem; }
-  .quote-attribution {
-    margin-top: 2rem;
-    font-family: 'Cinzel', serif;
-    font-size: 0.65rem;
-    letter-spacing: 0.3em;
-    color: var(--gold-dim);
-    text-transform: uppercase;
-  }
+  .quote-attribution { margin-top: 2rem; font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.3em; color: var(--gold-dim); text-transform: uppercase; }
 
-  /* ======= FOOTER ======= */
-  footer {
-    padding: 4rem 3rem;
-    background: var(--dark);
-    border-top: 1px solid rgba(201,168,76,0.08);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2rem;
-  }
-  .footer-logo {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 1.2rem;
-    background: linear-gradient(135deg, var(--gold-light), var(--gold));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+  /* ---- FOOTER ---- */
+  footer { padding: 4rem 3rem; background: var(--dark); border-top: 1px solid rgba(201,168,76,0.08); display: flex; flex-direction: column; align-items: center; gap: 2rem; }
+  .footer-logo { font-family: 'Cinzel Decorative', serif; font-size: 1.2rem; background: linear-gradient(135deg, var(--gold-light), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
   .footer-links { display: flex; gap: 2rem; flex-wrap: wrap; justify-content: center; }
-  .footer-links a {
-    font-family: 'Cinzel', serif;
-    font-size: 0.62rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--gold-dim);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
+  .footer-links a { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold-dim); text-decoration: none; transition: color 0.2s; }
   .footer-links a:hover { color: var(--gold); }
-  .footer-copy {
-    font-family: 'Cinzel', serif;
-    font-size: 0.6rem;
-    letter-spacing: 0.25em;
-    color: rgba(122,96,48,0.4);
-    text-transform: uppercase;
-  }
+  .footer-copy { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.25em; color: rgba(122,96,48,0.4); text-transform: uppercase; }
 
-  /* ======= ANIMATIONS ======= */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes scrollPulse {
-    0%, 100% { opacity: 0.2; height: 35px; }
-    50% { opacity: 0.8; height: 45px; }
-  }
+  /* ---- ANIMATIONS ---- */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes scrollPulse { 0%, 100% { opacity: 0.2; height: 35px; } 50% { opacity: 0.8; height: 45px; } }
 
-  /* ======= REDUCED MOTION ======= */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
     .dyk-track { animation: none; }
     .particle { display: none; }
   }
 
-  .reveal {
-    opacity: 0;
-    transform: translateY(35px);
-    transition: opacity 0.9s cubic-bezier(0.25,0.46,0.45,0.94), transform 0.9s cubic-bezier(0.25,0.46,0.45,0.94);
-  }
+  .reveal { opacity: 0; transform: translateY(35px); transition: opacity 0.9s cubic-bezier(0.25,0.46,0.45,0.94), transform 0.9s cubic-bezier(0.25,0.46,0.45,0.94); }
   .reveal.visible { opacity: 1; transform: translateY(0); }
   .reveal-delay-1 { transition-delay: 0.1s; }
   .reveal-delay-2 { transition-delay: 0.2s; }
   .reveal-delay-3 { transition-delay: 0.3s; }
 
-  /* ======= BACK TO TOP ======= */
-  .back-to-top {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    width: 40px;
-    height: 40px;
-    background: rgba(13,11,7,0.85);
-    border: 1px solid rgba(201,168,76,0.3);
-    color: var(--gold);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 90;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 0.3s, transform 0.3s, background 0.2s;
-    font-size: 1rem;
-    text-decoration: none;
-    backdrop-filter: blur(8px);
-  }
+  .back-to-top { position: fixed; bottom: 2rem; right: 2rem; width: 40px; height: 40px; background: rgba(13,11,7,0.85); border: 1px solid rgba(201,168,76,0.3); color: var(--gold); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 90; opacity: 0; transform: translateY(10px); transition: opacity 0.3s, transform 0.3s, background 0.2s; font-size: 1rem; text-decoration: none; backdrop-filter: blur(8px); }
   .back-to-top.visible { opacity: 1; transform: translateY(0); }
   .back-to-top:hover { background: rgba(201,168,76,0.15); }
 
-  /* ======= PERF PANEL ======= */
-  .perf-panel {
-    position: fixed;
-    top: 50%;
-    right: 1.5rem;
-    transform: translateY(-50%);
-    z-index: 150;
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-  }
-  .perf-btn {
-    font-family: 'Cinzel', serif;
-    font-size: 0.5rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--gold-dim);
-    background: rgba(13,11,7,0.7);
-    border: 1px solid rgba(201,168,76,0.15);
-    padding: 0.5rem 0.7rem;
-    cursor: pointer;
-    transition: color 0.2s, border-color 0.2s, background 0.2s;
-    backdrop-filter: blur(8px);
-    text-align: center;
-    min-width: 52px;
-  }
+  /* ---- LEGACY PERF PANEL (still present but superseded) ---- */
+  .perf-panel { position: fixed; top: 50%; right: 1.5rem; transform: translateY(-50%); z-index: 150; display: flex; flex-direction: column; gap: 0.4rem; }
+  .perf-btn { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold-dim); background: rgba(13,11,7,0.7); border: 1px solid rgba(201,168,76,0.15); padding: 0.5rem 0.7rem; cursor: pointer; transition: color 0.2s, border-color 0.2s, background 0.2s; backdrop-filter: blur(8px); text-align: center; min-width: 52px; }
   .perf-btn:hover { color: var(--gold); border-color: rgba(201,168,76,0.4); background: rgba(13,11,7,0.9); }
   .perf-btn.active { color: var(--gold); border-color: var(--gold); background: rgba(201,168,76,0.08); }
 
-  /* ======= RESPONSIVE ======= */
+  /* ---- RESPONSIVE ---- */
   @media (max-width: 900px) {
     .civ-inner { grid-template-columns: 1fr; min-height: auto; }
     .civ-section:nth-child(even) .civ-inner { direction: ltr; }
@@ -1302,6 +744,7 @@
     footer { padding: 3rem 2rem; }
     .narrative-banner { padding: 2.5rem 2rem; }
     .perf-panel { display: none; }
+    .perf-badge { bottom: 4.5rem; }
   }
   @media (max-width: 640px) {
     .top-nav { padding: 1rem 1.5rem; }
@@ -1319,24 +762,28 @@
     .footer-links { gap: 1rem; }
     .quiz-section { padding: 4rem 1.5rem; }
   }
-  @media (max-width: 400px) {
-    .civ-images { grid-template-rows: 160px 160px; }
-  }
+  @media (max-width: 400px) { .civ-images { grid-template-rows: 160px 160px; } }
 </style>
 </head>
 <body>
 
 <div class="progress-bar" id="progressBar"></div>
 
-<!-- PERFORMANCE PANEL -->
+<!-- ============================================================
+     ADAPTIVE PERFORMANCE BADGE
+============================================================ -->
+<div class="perf-badge" id="perfBadge">
+  <div class="perf-badge-inner badge-high" id="perfBadgeInner">● HIGH</div>
+  <div class="perf-badge-fps" id="perfBadgeFps"></div>
+</div>
+
+<!-- LEGACY MANUAL PERF PANEL -->
 <div class="perf-panel" id="perfPanel">
   <button class="perf-btn active" id="btnMotion" onclick="toggleMotion()" title="Toggle animations">ANIM</button>
   <button class="perf-btn active" id="btnParticles" onclick="toggleParticles()" title="Toggle particles">PTCL</button>
   <button class="perf-btn active" id="btnMarquee" onclick="toggleMarquee()" title="Toggle marquee">MRKQ</button>
   <button class="perf-btn" id="btnFps" onclick="toggleFps()" title="Show FPS">FPS</button>
 </div>
-
-<!-- FPS overlay -->
 <div id="fpsCounter" style="display:none;position:fixed;top:60px;right:1.5rem;font-family:'Cinzel',serif;font-size:0.65rem;letter-spacing:0.1em;color:var(--gold);background:rgba(13,11,7,0.85);border:1px solid rgba(201,168,76,0.2);padding:0.4rem 0.7rem;z-index:200;backdrop-filter:blur(8px);">-- FPS</div>
 
 <!-- NAV -->
@@ -1370,7 +817,7 @@
   <div class="hero-particles" id="particles"></div>
   <p class="hero-eyebrow">Echoes of the Ancient World</p>
   <h1 class="hero-title">Ancient<br>Civilizations</h1>
-  <p class="hero-tagline">Three great empires that shaped the foundations of human history — their legacies still echo across millennia.</p>
+  <p class="hero-tagline">Three great empires that shaped the foundations of human history &mdash; their legacies still echo across millennia.</p>
   <div class="hero-divider"><span class="hero-divider-icon">&#10022;</span></div>
   <div class="hero-cta">
     <a href="#mesopotamia" class="btn-primary">Explore Now</a>
@@ -1382,7 +829,7 @@
   </div>
 </section>
 
-<!-- INTERACTIVE TIMELINE -->
+<!-- TIMELINE -->
 <section class="timeline-section">
   <div class="timeline-section-header reveal">
     <span class="section-eyebrow">Across The Ages</span>
@@ -1393,7 +840,7 @@
   </div>
 </section>
 
-<!-- DID YOU KNOW -->
+<!-- DYK -->
 <div class="did-you-know">
   <div class="dyk-track" id="dykTrack"></div>
 </div>
@@ -1665,7 +1112,7 @@
   </div>
 </section>
 
-<!-- COMPARISON TABLE -->
+<!-- COMPARE -->
 <section class="compare-section" id="compare">
   <div class="section-header reveal">
     <span class="section-eyebrow">Side by Side</span>
@@ -1695,7 +1142,6 @@
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
   <div class="footer-logo">Ancient Civilizations</div>
   <nav class="footer-links">
@@ -1710,11 +1156,140 @@
 
 <script>
 /* ============================================================
-   PERFORMANCE TOGGLES
+   ADAPTIVE PERFORMANCE MONITOR
+   — Watches real FPS continuously and degrades / upgrades
+     render quality in three tiers: HIGH → MEDIUM → LOW
+   — On LOW it pauses particles, slows marquee, strips
+     backdrop-filter, disables image hover zoom, and kills
+     dot pulse animations.
+   — Quality climbs back automatically if FPS recovers.
+============================================================ */
+var AdaptivePerf = (function() {
+  var SAMPLE_WINDOW  = 60;   // frames to average over
+  var THRESHOLD_LOW  = 30;   // fps below → LOW
+  var THRESHOLD_MED  = 45;   // fps below → MEDIUM, above → HIGH
+  var HYSTERESIS     = 8;    // must stay above threshold N frames before upgrading
+  var REPORT_RATE    = 90;   // update badge every N frames
+
+  var frames         = [];
+  var lastTS         = 0;
+  var currentQuality = 'high';
+  var stableCount    = 0;
+  var rafID          = null;
+  var badgeEl        = document.getElementById('perfBadge');
+  var badgeInner     = document.getElementById('perfBadgeInner');
+  var badgeFps       = document.getElementById('perfBadgeFps');
+  var frameNum       = 0;
+  var legacyFpsEl    = document.getElementById('fpsCounter');
+  var fpsOnLegacy    = false;
+
+  function tick(ts) {
+    rafID = requestAnimationFrame(tick);
+    if (lastTS === 0) { lastTS = ts; return; }
+
+    var delta = ts - lastTS;
+    lastTS = ts;
+    if (delta > 0 && delta < 1000) {
+      frames.push(1000 / delta);
+      if (frames.length > SAMPLE_WINDOW) frames.shift();
+    }
+    frameNum++;
+
+    if (frameNum % REPORT_RATE === 0 && frames.length >= 10) {
+      var avg = frames.reduce(function(a,b){return a+b;},0) / frames.length;
+      var desired = avg < THRESHOLD_LOW ? 'low' : avg < THRESHOLD_MED ? 'medium' : 'high';
+
+      if (desired === currentQuality) {
+        stableCount = 0;
+      } else {
+        // downgrade immediately; upgrade only after stable
+        var isUpgrade = (desired === 'high' && currentQuality !== 'high') ||
+                        (desired === 'medium' && currentQuality === 'low');
+        if (!isUpgrade) {
+          applyQuality(desired);
+          stableCount = 0;
+        } else {
+          stableCount++;
+          if (stableCount >= HYSTERESIS) {
+            applyQuality(desired);
+            stableCount = 0;
+          }
+        }
+      }
+
+      // update badge
+      var fpsStr = Math.round(avg) + ' fps';
+      badgeFps.textContent = fpsStr;
+      if (legacyFpsEl && fpsOnLegacy) legacyFpsEl.textContent = fpsStr;
+    }
+  }
+
+  function applyQuality(q) {
+    if (q === currentQuality) return;
+    var body = document.body;
+    body.classList.remove('quality-high','quality-medium','quality-low');
+    body.classList.add('quality-' + q);
+    currentQuality = q;
+
+    var labels = { high: '● HIGH', medium: '◑ MED', low: '○ LOW' };
+    var classes = { high: 'badge-high', medium: 'badge-medium', low: 'badge-low' };
+    badgeInner.textContent = labels[q];
+    badgeInner.className   = 'perf-badge-inner ' + classes[q];
+
+    // show badge briefly on change
+    badgeEl.classList.add('show');
+    clearTimeout(badgeEl._hideTimer);
+    badgeEl._hideTimer = setTimeout(function(){ badgeEl.classList.remove('show'); }, 3000);
+
+    // runtime effects
+    var dykTrack = document.getElementById('dykTrack');
+    if (q === 'low') {
+      if (dykTrack) dykTrack.style.animationDuration = '80s';
+      // reduce particle count in DOM
+      var particles = document.querySelectorAll('.particle');
+      particles.forEach(function(p, i){ if (i >= 6) p.style.display='none'; });
+    } else if (q === 'medium') {
+      if (dykTrack) dykTrack.style.animationDuration = '55s';
+      var particles = document.querySelectorAll('.particle');
+      particles.forEach(function(p, i){ p.style.display = i < 10 ? '' : 'none'; });
+    } else {
+      if (dykTrack) dykTrack.style.animationDuration = '40s';
+      document.querySelectorAll('.particle').forEach(function(p){ p.style.display=''; });
+    }
+
+    // visibility of image hover effects — on low devices skip will-change
+    var imgs = document.querySelectorAll('.civ-img-wrap img');
+    imgs.forEach(function(img){
+      img.style.willChange = q === 'high' ? 'transform' : 'auto';
+    });
+  }
+
+  function start() {
+    // initial quality: start high, let monitor adjust
+    document.body.classList.add('quality-high');
+    rafID = requestAnimationFrame(tick);
+    // also show badge on load briefly
+    badgeEl.classList.add('show');
+    badgeEl._hideTimer = setTimeout(function(){ badgeEl.classList.remove('show'); }, 3000);
+  }
+
+  function stop() { if (rafID) cancelAnimationFrame(rafID); }
+
+  function getFps() {
+    if (!frames.length) return 0;
+    return Math.round(frames.reduce(function(a,b){return a+b;},0)/frames.length);
+  }
+
+  function getQuality() { return currentQuality; }
+  function setLegacyFpsEl(on) { fpsOnLegacy = on; }
+
+  return { start:start, stop:stop, getFps:getFps, getQuality:getQuality, setLegacyFpsEl:setLegacyFpsEl };
+})();
+
+/* ============================================================
+   LEGACY MANUAL PERF TOGGLES
 ============================================================ */
 var motionOn = true, particlesOn = true, marqueeOn = true, fpsOn = false;
-var fpsCounterEl = document.getElementById('fpsCounter');
-var lastFrameTime = 0, frameCount = 0, fps = 0;
 
 function toggleMotion() {
   motionOn = !motionOn;
@@ -1743,62 +1318,48 @@ function toggleMarquee() {
 function toggleFps() {
   fpsOn = !fpsOn;
   document.getElementById('btnFps').classList.toggle('active', fpsOn);
-  fpsCounterEl.style.display = fpsOn ? 'block' : 'none';
-  if (fpsOn) requestAnimationFrame(trackFps);
-}
-
-function trackFps(ts) {
-  if (!fpsOn) return;
-  frameCount++;
-  if (ts - lastFrameTime >= 1000) {
-    fps = frameCount;
-    frameCount = 0;
-    lastFrameTime = ts;
-    fpsCounterEl.textContent = fps + ' FPS';
-  }
-  requestAnimationFrame(trackFps);
+  var el = document.getElementById('fpsCounter');
+  el.style.display = fpsOn ? 'block' : 'none';
+  AdaptivePerf.setLegacyFpsEl(fpsOn);
 }
 
 /* ============================================================
-   SCROLL EFFECTS — throttled with rAF
+   SCROLL — throttled rAF
 ============================================================ */
 var progressBar = document.getElementById('progressBar');
-var topNav = document.getElementById('topNav');
-var backToTop = document.getElementById('backToTop');
-var scrollTicking = false;
+var topNav      = document.getElementById('topNav');
+var backToTop   = document.getElementById('backToTop');
+var scrollTick  = false;
 
 window.addEventListener('scroll', function() {
-  if (!scrollTicking) {
+  if (!scrollTick) {
     requestAnimationFrame(function() {
-      var scrolled = window.scrollY;
-      var maxScroll = document.body.scrollHeight - window.innerHeight;
-      progressBar.style.width = (scrolled / maxScroll * 100) + '%';
-      topNav.classList.toggle('scrolled', scrolled > 60);
-      backToTop.classList.toggle('visible', scrolled > 400);
-      scrollTicking = false;
+      var s = window.scrollY;
+      var m = document.body.scrollHeight - window.innerHeight;
+      progressBar.style.width = (s / m * 100) + '%';
+      topNav.classList.toggle('scrolled', s > 60);
+      backToTop.classList.toggle('visible', s > 400);
+      scrollTick = false;
     });
-    scrollTicking = true;
+    scrollTick = true;
   }
 }, { passive: true });
 
 /* ============================================================
    REVEAL ON SCROLL
 ============================================================ */
-var revealObserver = new IntersectionObserver(function(entries) {
-  entries.forEach(function(entry) {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      revealObserver.unobserve(entry.target);
-    }
+var revealObs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); }
   });
 }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-document.querySelectorAll('.reveal').forEach(function(el) { revealObserver.observe(el); });
+document.querySelectorAll('.reveal').forEach(function(el) { revealObs.observe(el); });
 
 /* ============================================================
    MOBILE MENU
 ============================================================ */
 var menuToggle = document.getElementById('menuToggle');
-var mobileNav = document.getElementById('mobileNav');
+var mobileNav  = document.getElementById('mobileNav');
 var navOverlay = document.getElementById('navOverlay');
 
 function closeMobileNav() {
@@ -1817,25 +1378,24 @@ navOverlay.addEventListener('click', closeMobileNav);
 document.querySelectorAll('.mobile-link').forEach(function(l) { l.addEventListener('click', closeMobileNav); });
 
 /* ============================================================
-   FLOATING PARTICLES
+   PARTICLES — use DocumentFragment for minimal reflow
 ============================================================ */
 var particlesContainer = document.getElementById('particles');
-var fragment = document.createDocumentFragment();
+var pfrag = document.createDocumentFragment();
 for (var i = 0; i < 18; i++) {
   var p = document.createElement('div');
   p.className = 'particle';
   p.style.left = (Math.random() * 100) + '%';
   var sz = (Math.random() * 2 + 1) + 'px';
-  p.style.width = sz;
-  p.style.height = sz;
+  p.style.width = sz; p.style.height = sz;
   p.style.animationDuration = (Math.random() * 15 + 10) + 's';
-  p.style.animationDelay = (Math.random() * 15) + 's';
-  fragment.appendChild(p);
+  p.style.animationDelay    = (Math.random() * 15) + 's';
+  pfrag.appendChild(p);
 }
-particlesContainer.appendChild(fragment);
+particlesContainer.appendChild(pfrag);
 
 /* ============================================================
-   SMOOTH SCROLL WITH NAV OFFSET
+   SMOOTH SCROLL
 ============================================================ */
 document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
   anchor.addEventListener('click', function(e) {
@@ -1843,41 +1403,38 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
     if (href === '#') return;
     e.preventDefault();
     var target = document.querySelector(href);
-    if (target) {
-      var y = target.getBoundingClientRect().top + window.scrollY - 70;
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }
+    if (target) window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - 70, behavior: 'smooth' });
   });
 });
 
 /* ============================================================
-   INTERACTIVE TIMELINE
+   TIMELINE
 ============================================================ */
 var tlEvents = [
   { date: 'c. 3500 BCE', name: 'Mesopotamia Rises', color: 'var(--meso-light)', above: true,
-    desc: 'The Sumerians establish the first urban civilization in southern Mesopotamia, laying the foundations of all that follows.' },
+    desc: 'The Sumerians establish the first urban civilization in southern Mesopotamia.' },
   { date: 'c. 3100 BCE', name: 'Egypt Unifies', color: 'var(--egypt-light)', above: false,
     desc: 'Pharaoh Narmer unites Upper and Lower Egypt, creating one of history\u2019s most enduring civilizations.' },
   { date: 'c. 2560 BCE', name: 'Great Pyramid Built', color: 'var(--egypt-light)', above: true,
-    desc: 'The Great Pyramid of Giza is completed for Pharaoh Khufu \u2014 the tallest man-made structure on Earth for 3,800 years.' },
+    desc: 'The Great Pyramid of Giza is completed for Pharaoh Khufu \u2014 tallest structure for 3,800 years.' },
   { date: 'c. 2100 BCE', name: 'Xia Dynasty, China', color: 'var(--china-light)', above: false,
-    desc: 'The legendary Xia Dynasty begins, marking the dawn of Chinese civilization along the Yellow River.' },
+    desc: 'The legendary Xia Dynasty begins along the Yellow River.' },
   { date: 'c. 1754 BCE', name: 'Code of Hammurabi', color: 'var(--meso-light)', above: true,
-    desc: 'King Hammurabi of Babylon inscribes 282 laws \u2014 the world\u2019s first comprehensive legal code.' },
+    desc: 'King Hammurabi inscribes 282 laws \u2014 the world\u2019s first comprehensive legal code.' },
   { date: 'c. 1200 BCE', name: 'Bronze Age Collapse', color: 'var(--gold)', above: false,
-    desc: 'A mysterious catastrophe brings down many Eastern Mediterranean civilizations, reshaping the ancient world.' },
+    desc: 'A mysterious catastrophe brings down many Eastern Mediterranean civilizations.' },
   { date: 'c. 551 BCE', name: 'Confucius Born', color: 'var(--china-light)', above: true,
-    desc: 'The birth of Confucius, whose moral philosophy would shape East Asian civilization for over 2,500 years.' },
+    desc: 'Birth of Confucius, whose moral philosophy would shape East Asia for 2,500 years.' },
   { date: '539 BCE', name: 'Persia Conquers Babylon', color: 'var(--meso-light)', above: false,
-    desc: 'Cyrus the Great of Persia captures Babylon, effectively ending Mesopotamian independence.' },
+    desc: 'Cyrus the Great captures Babylon, ending Mesopotamian independence.' },
   { date: '221 BCE', name: 'Qin Unifies China', color: 'var(--china-light)', above: true,
-    desc: 'Qin Shi Huang becomes China\u2019s first emperor, unifying the warring states and beginning the imperial era.' },
+    desc: 'Qin Shi Huang becomes China\u2019s first emperor, beginning the imperial era.' },
   { date: '30 BCE', name: 'Egypt Falls to Rome', color: 'var(--egypt-light)', above: false,
-    desc: 'Cleopatra VII, the last pharaoh, dies. Egypt becomes a Roman province, ending 3,000 years of pharaonic civilization.' }
+    desc: 'Cleopatra VII dies. Egypt becomes a Roman province, ending 3,000 years of pharaonic rule.' }
 ];
 
-var track = document.getElementById('timelineTrack');
-var tlFragment = document.createDocumentFragment();
+var track  = document.getElementById('timelineTrack');
+var tlFrag = document.createDocumentFragment();
 tlEvents.forEach(function(ev, i) {
   var el = document.createElement('div');
   el.className = 'tl-event ' + (ev.above ? 'above' : 'below');
@@ -1894,48 +1451,36 @@ tlEvents.forEach(function(ev, i) {
       '<div class="tl-tooltip-title" style="color:' + ev.color + '">' + ev.name + '</div>' +
       '<div class="tl-tooltip-desc">' + ev.desc + '</div>' +
     '</div>';
-  tlFragment.appendChild(el);
+  tlFrag.appendChild(el);
 });
-track.appendChild(tlFragment);
+track.appendChild(tlFrag);
 
-// Drag to scroll
+// drag to scroll
 var tlWrap = document.getElementById('timelineWrap');
 var isDragging = false, startX, scrollLeft;
-tlWrap.addEventListener('mousedown', function(e) {
-  isDragging = true;
-  startX = e.pageX - tlWrap.offsetLeft;
-  scrollLeft = tlWrap.scrollLeft;
-  tlWrap.style.cursor = 'grabbing';
-});
-tlWrap.addEventListener('mousemove', function(e) {
-  if (!isDragging) return;
-  e.preventDefault();
-  tlWrap.scrollLeft = scrollLeft - (e.pageX - tlWrap.offsetLeft - startX);
-});
-['mouseup', 'mouseleave'].forEach(function(ev) {
-  tlWrap.addEventListener(ev, function() { isDragging = false; tlWrap.style.cursor = 'grab'; });
-});
+tlWrap.addEventListener('mousedown', function(e) { isDragging=true; startX=e.pageX-tlWrap.offsetLeft; scrollLeft=tlWrap.scrollLeft; tlWrap.style.cursor='grabbing'; });
+tlWrap.addEventListener('mousemove', function(e) { if(!isDragging) return; e.preventDefault(); tlWrap.scrollLeft = scrollLeft-(e.pageX-tlWrap.offsetLeft-startX); });
+['mouseup','mouseleave'].forEach(function(ev){ tlWrap.addEventListener(ev, function(){ isDragging=false; tlWrap.style.cursor='grab'; }); });
 
 /* ============================================================
-   DID YOU KNOW MARQUEE
+   DYK MARQUEE
 ============================================================ */
 var dykFacts = [
-  { icon: '\u{1F3BA}', text: 'The oldest known story ever written \u2014 the Epic of Gilgamesh \u2014 is from Mesopotamia, around 2100 BCE.' },
-  { icon: '\u{1F41B}', text: 'China\u2019s silk discovery legend says Empress Leizu found it when a silkworm cocoon fell into her tea.' },
-  { icon: '\u{1F985}', text: 'Ancient Egyptians used moldy bread to treat infected wounds \u2014 a crude form of antibiotic therapy.' },
-  { icon: '\u23F0',    text: 'We still use the Babylonian base-60 system every day \u2014 it\u2019s why there are 60 seconds in a minute.' },
-  { icon: '\u{1F30A}', text: 'The Great Pyramid\u2019s sides are aligned to true north with an accuracy of 0.05 degrees.' },
-  { icon: '\u{1F4D6}', text: 'Confucius never wrote a single book \u2014 his teachings were compiled by disciples after his death.' },
-  { icon: '\u{1F522}', text: 'Ancient Mesopotamians could calculate the square root of 2 to 6 decimal places.' },
-  { icon: '\u{1F409}', text: 'China\u2019s oracle bone script \u2014 used for divination \u2014 is the ancestor of modern Chinese characters.' },
-  { icon: '\u{1F48A}', text: 'Egyptian physicians had specialty roles: one for teeth, one for eyes, one for internal medicine.' },
-  { icon: '\u{1F33E}', text: 'Ancient Mesopotamians had over 50 types of beer recorded in their cuneiform tablets.' }
+  { icon:'\u{1F3BA}', text:'The oldest known story ever written \u2014 the Epic of Gilgamesh \u2014 is from Mesopotamia, around 2100 BCE.' },
+  { icon:'\u{1F41B}', text:'China\u2019s silk discovery legend says Empress Leizu found it when a silkworm cocoon fell into her tea.' },
+  { icon:'\u{1F985}', text:'Ancient Egyptians used moldy bread to treat infected wounds \u2014 a crude form of antibiotic therapy.' },
+  { icon:'\u23F0',    text:'We still use the Babylonian base-60 system every day \u2014 it\u2019s why there are 60 seconds in a minute.' },
+  { icon:'\u{1F30A}', text:'The Great Pyramid\u2019s sides are aligned to true north with an accuracy of 0.05 degrees.' },
+  { icon:'\u{1F4D6}', text:'Confucius never wrote a single book \u2014 his teachings were compiled by disciples after his death.' },
+  { icon:'\u{1F522}', text:'Ancient Mesopotamians could calculate the square root of 2 to 6 decimal places.' },
+  { icon:'\u{1F409}', text:'China\u2019s oracle bone script \u2014 used for divination \u2014 is the ancestor of modern Chinese characters.' },
+  { icon:'\u{1F48A}', text:'Egyptian physicians had specialty roles: one for teeth, one for eyes, one for internal medicine.' },
+  { icon:'\u{1F33E}', text:'Ancient Mesopotamians had over 50 types of beer recorded in their cuneiform tablets.' }
 ];
 
 var dykTrack = document.getElementById('dykTrack');
-var dykFrag = document.createDocumentFragment();
-var doubled = dykFacts.concat(dykFacts);
-doubled.forEach(function(f) {
+var dykFrag  = document.createDocumentFragment();
+dykFacts.concat(dykFacts).forEach(function(f) {
   var item = document.createElement('div');
   item.className = 'dyk-item';
   item.innerHTML = '<span class="dyk-icon">' + f.icon + '</span><span>' + f.text + '</span>';
@@ -1944,63 +1489,38 @@ doubled.forEach(function(f) {
 dykTrack.appendChild(dykFrag);
 
 /* ============================================================
-   ACHIEVEMENT EXPAND/COLLAPSE
+   ACHIEVEMENT EXPAND
 ============================================================ */
 function toggleAchievement(el) {
-  var isExpanded = el.classList.contains('expanded');
-  el.closest('.achievements').querySelectorAll('.achievement.expanded').forEach(function(a) { a.classList.remove('expanded'); });
-  if (!isExpanded) el.classList.add('expanded');
+  var wasExpanded = el.classList.contains('expanded');
+  el.closest('.achievements').querySelectorAll('.achievement.expanded').forEach(function(a){ a.classList.remove('expanded'); });
+  if (!wasExpanded) el.classList.add('expanded');
 }
 
 /* ============================================================
    QUIZ ENGINE
 ============================================================ */
 var questions = [
-  {
-    q: 'Which ancient civilization invented cuneiform \u2014 the world\u2019s first writing system?',
-    options: ['Ancient Egypt', 'Ancient China', 'Mesopotamia', 'The Indus Valley'],
-    correct: 2,
-    feedback: {
-      right: 'Exactly right. The Sumerians of Mesopotamia developed cuneiform around 3400 BCE \u2014 pressed into wet clay with a reed stylus.',
-      wrong: 'The correct answer is Mesopotamia. The Sumerians invented cuneiform around 3400 BCE \u2014 the earliest known writing system.'
-    }
-  },
-  {
-    q: 'The Great Pyramid of Giza was built as the tomb of which pharaoh?',
-    options: ['Ramesses II', 'Tutankhamun', 'Cleopatra VII', 'Khufu (Cheops)'],
-    correct: 3,
-    feedback: {
-      right: 'Perfect! Khufu \u2014 also known as Cheops \u2014 commissioned the Great Pyramid around 2560 BCE during the Fourth Dynasty.',
-      wrong: 'The correct answer is Khufu (Cheops). Built around 2560 BCE, it remained the world\u2019s tallest structure for nearly 4,000 years.'
-    }
-  },
-  {
-    q: 'The Four Great Inventions of ancient China include all EXCEPT which of the following?',
-    options: ['Gunpowder', 'The compass', 'The wheel', 'Printing'],
-    correct: 2,
-    feedback: {
-      right: 'Correct! The Four Great Inventions are gunpowder, paper, printing, and the compass. The wheel is associated with Mesopotamia.',
-      wrong: 'The correct answer is the wheel. China\u2019s Four Great Inventions are gunpowder, paper, printing, and the magnetic compass.'
-    }
-  },
-  {
-    q: 'The Code of Hammurabi was created by the king of which ancient empire?',
-    options: ['The Assyrian Empire', 'The Babylonian Empire', 'The Persian Empire', 'The Sumerian City-States'],
-    correct: 1,
-    feedback: {
-      right: 'Spot on! Hammurabi was the sixth king of Babylon, and his code of 282 laws remains one of history\u2019s most iconic legal documents.',
-      wrong: 'The answer is the Babylonian Empire. King Hammurabi of Babylon created this landmark legal code around 1754 BCE.'
-    }
-  },
-  {
-    q: 'Ancient Egypt\u2019s 365-day solar calendar became the direct predecessor of which modern calendar?',
-    options: ['The Islamic Hijri Calendar', 'The Hebrew Calendar', 'The Gregorian Calendar', 'The Mayan Long Count Calendar'],
-    correct: 2,
-    feedback: {
-      right: 'Outstanding! The Egyptian solar calendar was adopted by Julius Caesar as the Julian Calendar, then refined into the Gregorian Calendar we use today.',
-      wrong: 'The correct answer is the Gregorian Calendar. Egypt \u2192 Julian Calendar \u2192 Gregorian Calendar (1582), used globally today.'
-    }
-  }
+  { q:'Which ancient civilization invented cuneiform \u2014 the world\u2019s first writing system?',
+    options:['Ancient Egypt','Ancient China','Mesopotamia','The Indus Valley'], correct:2,
+    feedback:{right:'Exactly right. The Sumerians of Mesopotamia developed cuneiform around 3400 BCE.',
+              wrong:'The correct answer is Mesopotamia. The Sumerians invented cuneiform around 3400 BCE.'} },
+  { q:'The Great Pyramid of Giza was built as the tomb of which pharaoh?',
+    options:['Ramesses II','Tutankhamun','Cleopatra VII','Khufu (Cheops)'], correct:3,
+    feedback:{right:'Perfect! Khufu \u2014 also known as Cheops \u2014 commissioned the Great Pyramid around 2560 BCE.',
+              wrong:'The correct answer is Khufu (Cheops). Built around 2560 BCE, it was the world\u2019s tallest structure for nearly 4,000 years.'} },
+  { q:'The Four Great Inventions of ancient China include all EXCEPT which of the following?',
+    options:['Gunpowder','The compass','The wheel','Printing'], correct:2,
+    feedback:{right:'Correct! The wheel is associated with Mesopotamia, not China\u2019s Four Great Inventions.',
+              wrong:'The correct answer is the wheel. China\u2019s Four Great Inventions are gunpowder, paper, printing, and the compass.'} },
+  { q:'The Code of Hammurabi was created by the king of which ancient empire?',
+    options:['The Assyrian Empire','The Babylonian Empire','The Persian Empire','The Sumerian City-States'], correct:1,
+    feedback:{right:'Spot on! Hammurabi was the sixth king of Babylon.',
+              wrong:'The answer is the Babylonian Empire. King Hammurabi created this landmark legal code around 1754 BCE.'} },
+  { q:'Ancient Egypt\u2019s 365-day solar calendar became the direct predecessor of which modern calendar?',
+    options:['The Islamic Hijri Calendar','The Hebrew Calendar','The Gregorian Calendar','The Mayan Long Count Calendar'], correct:2,
+    feedback:{right:'Outstanding! Egypt \u2192 Julian Calendar \u2192 Gregorian Calendar, used globally today.',
+              wrong:'The correct answer is the Gregorian Calendar. Egypt \u2192 Julian Calendar \u2192 Gregorian Calendar (1582).'} }
 ];
 
 var score = 0;
@@ -2008,24 +1528,22 @@ var score = 0;
 function buildQuiz() {
   var card = document.getElementById('quizCard');
   card.innerHTML = '';
-  var letters = ['A', 'B', 'C', 'D'];
+  var letters = ['A','B','C','D'];
   questions.forEach(function(q, idx) {
     var wrap = document.createElement('div');
     wrap.className = 'quiz-question-wrap' + (idx === 0 ? ' active' : '');
     wrap.id = 'question-' + idx;
     var optsHtml = q.options.map(function(opt, oi) {
       return '<button class="quiz-option" onclick="selectAnswer(this,' + idx + ',' + oi + ')" data-index="' + oi + '">' +
-        '<span class="quiz-option-letter">' + letters[oi] + '</span>' + opt +
-        '</button>';
+        '<span class="quiz-option-letter">' + letters[oi] + '</span>' + opt + '</button>';
     }).join('');
     wrap.innerHTML =
-      '<span class="quiz-q-tag">Question ' + (idx + 1) + '</span>' +
+      '<span class="quiz-q-tag">Question ' + (idx+1) + '</span>' +
       '<p class="quiz-question">' + q.q + '</p>' +
       '<div class="quiz-options">' + optsHtml + '</div>' +
       '<div class="quiz-feedback" id="feedback-' + idx + '"></div>' +
       '<button class="quiz-next-btn" id="next-' + idx + '" onclick="nextQuestion(' + idx + ')">' +
-        (idx < questions.length - 1 ? 'Next Question \u2192' : 'See My Score') +
-      '</button>';
+        (idx < questions.length-1 ? 'Next Question \u2192' : 'See My Score') + '</button>';
     card.appendChild(wrap);
   });
 }
@@ -2034,18 +1552,16 @@ function selectAnswer(btn, qIdx, optIdx) {
   var wrap = document.getElementById('question-' + qIdx);
   if (wrap.querySelector('.answered')) return;
   var q = questions[qIdx];
-  var allOpts = wrap.querySelectorAll('.quiz-option');
-  allOpts.forEach(function(o) { o.classList.add('answered'); });
+  wrap.querySelectorAll('.quiz-option').forEach(function(o){ o.classList.add('answered'); });
   var feedback = document.getElementById('feedback-' + qIdx);
-  var nextBtn = document.getElementById('next-' + qIdx);
+  var nextBtn  = document.getElementById('next-' + qIdx);
   if (optIdx === q.correct) {
-    btn.classList.add('correct');
-    score++;
+    btn.classList.add('correct'); score++;
     feedback.textContent = '\u2713 ' + q.feedback.right;
     feedback.className = 'quiz-feedback correct-fb show';
   } else {
     btn.classList.add('wrong');
-    allOpts[q.correct].classList.add('revealed');
+    wrap.querySelectorAll('.quiz-option')[q.correct].classList.add('revealed');
     feedback.textContent = '\u2717 ' + q.feedback.wrong;
     feedback.className = 'quiz-feedback wrong-fb show';
   }
@@ -2056,21 +1572,17 @@ function selectAnswer(btn, qIdx, optIdx) {
 function nextQuestion(current) {
   document.getElementById('question-' + current).classList.remove('active');
   if (current + 1 < questions.length) {
-    document.getElementById('question-' + (current + 1)).classList.add('active');
+    document.getElementById('question-' + (current+1)).classList.add('active');
     updateCounter(current + 2);
-  } else {
-    showResult();
-  }
+  } else { showResult(); }
 }
 
 function updateProgress(answered) {
   document.getElementById('quizProgressFill').style.width = (answered / questions.length * 100) + '%';
 }
-
 function updateCounter(current) {
   document.getElementById('quizCounter').textContent = current + ' / ' + questions.length;
 }
-
 function showResult() {
   document.getElementById('quizCard').style.display = 'none';
   document.getElementById('quizCounter').style.opacity = '0';
@@ -2087,18 +1599,20 @@ function showResult() {
   ];
   document.getElementById('resultMsg').textContent = msgs[score] || msgs[4];
 }
-
 function restartQuiz() {
   score = 0;
   document.getElementById('quizResult').classList.remove('show');
   document.getElementById('quizCard').style.display = '';
   document.getElementById('quizCounter').style.opacity = '1';
-  updateCounter(1);
-  updateProgress(0);
-  buildQuiz();
+  updateCounter(1); updateProgress(0); buildQuiz();
 }
 
 buildQuiz();
+
+/* ============================================================
+   START ADAPTIVE PERFORMANCE MONITOR — last, after DOM ready
+============================================================ */
+AdaptivePerf.start();
 </script>
 </body>
 </html>
